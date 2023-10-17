@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tx\Cacheopt\Tests\Functional;
@@ -26,13 +27,13 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class CacheOptimizerFilesTest extends CacheOptimizerTestAbstract
 {
-    const FILE_IDENTIFIER_REFERENCED = '/testdirectory/testfile_referenced.txt';
+    public const FILE_IDENTIFIER_REFERENCED = '/testdirectory/testfile_referenced.txt';
 
-    const FILE_IDENTIFIER_REFERENCED_IN_DIRECTORY = '/testdirectory_referenced/file_in_referenced_dir.txt';
+    public const FILE_IDENTIFIER_REFERENCED_IN_DIRECTORY = '/testdirectory_referenced/file_in_referenced_dir.txt';
 
-    const PAGE_UID_REFERENCING_CONTENT_REFERENCING_DIRECTORY = 1310;
+    public const PAGE_UID_REFERENCING_CONTENT_REFERENCING_DIRECTORY = 1310;
 
-    const RESOURCE_STORAGE_UID = 1;
+    public const RESOURCE_STORAGE_UID = 1;
 
     /**
      * @var CacheOptimizerFiles
@@ -52,7 +53,7 @@ class CacheOptimizerFilesTest extends CacheOptimizerTestAbstract
     /**
      * Initializes required classes.
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->storageRepository = GeneralUtility::makeInstance(StorageRepository::class);
@@ -65,14 +66,11 @@ class CacheOptimizerFilesTest extends CacheOptimizerTestAbstract
     }
 
     /**
-     *
      * If a sys_file record is changed the directory of the file is detected
      * and the cache of all pages is cleared where a reference to this directory is
      * used in the content elements.
-     *
-     * @test
      */
-    public function fileChangeClearsCacheForPagesReferencingToTheDirectory()
+    public function testFileChangeClearsCacheForPagesReferencingToTheDirectory(): void
     {
         $this->fillPageCache(self::PAGE_UID_REFERENCED_DIRECTORY);
         $this->fillPageCache(self::PAGE_UID_REFERENCING_CONTENT_REFERENCING_DIRECTORY);
@@ -95,10 +93,8 @@ class CacheOptimizerFilesTest extends CacheOptimizerTestAbstract
     /**
      * If a sys_file record is changed the the cache of all pages is cleared
      * where a reference to this file is used in the content elements.
-     *
-     * @test
      */
-    public function fileChangeClearsCacheForPagesReferencingToTheFile()
+    public function testFileChangeClearsCacheForPagesReferencingToTheFile(): void
     {
         $this->fillPageCache(self::PAGE_UID_REFERENCED_FILE);
 
@@ -118,10 +114,8 @@ class CacheOptimizerFilesTest extends CacheOptimizerTestAbstract
     /**
      * If a sys_file record that is referenced by a page is overwritten by an upload
      * the cache of the page referencing the file should be cleared.
-     *
-     * @test
      */
-    public function fileUploadClearsCacheOfPageWhereOverwrittenFileIsReferenced()
+    public function testFileUploadClearsCacheOfPageWhereOverwrittenFileIsReferenced(): void
     {
         $this->fillPageCache(self::PAGE_UID_REFERENCED_FILE);
 
@@ -172,7 +166,7 @@ class CacheOptimizerFilesTest extends CacheOptimizerTestAbstract
     /**
      * Initializes the file processor.
      */
-    protected function initFileProcessor()
+    protected function initFileProcessor(): void
     {
         $this->fileProcessor->setExistingFilesConflictMode(DuplicationBehavior::REPLACE);
     }
@@ -183,7 +177,7 @@ class CacheOptimizerFilesTest extends CacheOptimizerTestAbstract
      *
      * @param array $fileValues
      */
-    protected function processFileArrayAndFlushCache($fileValues)
+    protected function processFileArrayAndFlushCache($fileValues): void
     {
         $this->fileProcessor->start($fileValues);
         $this->fileProcessor->processData();

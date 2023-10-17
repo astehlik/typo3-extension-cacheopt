@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tx\Cacheopt;
@@ -14,9 +15,6 @@ namespace Tx\Cacheopt;
  *                                                                        */
 
 use Doctrine\DBAL\Connection;
-use InvalidArgumentException;
-use PDO;
-use RuntimeException;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
@@ -51,19 +49,19 @@ class CacheOptimizerDataHandler
      * adds related records to the cache clearing queue.
      *
      * @param array $parameters Parameters array containing:
-     * pageIdArray => reference to indexed array containing the records for which the cache should be cleared
-     * table => the name of the table of the current record
-     * uid =>  the uid of the record
-     * functionID => is always clear_cache()
-     * @param DataHandler $dataHandler
-     * @throws InvalidArgumentException
-     * @throws RuntimeException
+     *                          pageIdArray => reference to indexed array containing the records for which the cache should be cleared
+     *                          table => the name of the table of the current record
+     *                          uid =>  the uid of the record
+     *                          functionID => is always clear_cache()
+     *
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     public function dataHandlerClearPageCacheEval(
         array $parameters,
         /** @noinspection PhpUnusedParameterInspection */
         DataHandler $dataHandler
-    ) {
+    ): void {
         $this->initialize();
 
         if ($parameters['functionID'] !== 'clear_cache()') {
@@ -81,7 +79,7 @@ class CacheOptimizerDataHandler
 
         $this->cacheOptimizerRegistry->registerProcessedRecord($table, $uid);
 
-        $this->currentPageIdArray =& $parameters['pageIdArray'];
+        $this->currentPageIdArray = &$parameters['pageIdArray'];
         $this->registerRelatedPluginPagesForCacheFlush($table);
     }
 
@@ -89,8 +87,7 @@ class CacheOptimizerDataHandler
      * Returns a where statement that excludes all page UIDs (pid field)
      * for which the cache is already flushed.
      *
-     * @param bool $neverExcludeRoot If TRUE the TYPO3 root (pid = 0) will never be excluded.
-     * @param QueryBuilder $queryBuilder
+     * @param bool $neverExcludeRoot if TRUE the TYPO3 root (pid = 0) will never be excluded
      */
     protected function getPidExcludeStatement($neverExcludeRoot, QueryBuilder $queryBuilder): void
     {
@@ -107,7 +104,7 @@ class CacheOptimizerDataHandler
         if ($neverExcludeRoot) {
             $pidQuery = $queryBuilder->expr()->orX(
                 $pidQuery,
-                $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter(0, PDO::PARAM_INT))
+                $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT))
             );
         }
 
@@ -117,9 +114,6 @@ class CacheOptimizerDataHandler
     /**
      * Builds a where statement that selects all tt_content elements that
      * have a content type or a plugin type that is related to the given table.
-     *
-     * @param string $table
-     * @param QueryBuilder $queryBuilder
      */
     protected function getTtContentWhereStatementForTable(string $table, QueryBuilder $queryBuilder): void
     {
@@ -160,10 +154,9 @@ class CacheOptimizerDataHandler
     /**
      * Initializes required objects.
      *
-     * @return void
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
-    protected function initialize()
+    protected function initialize(): void
     {
         $this->cacheOptimizerRegistry = CacheOptimizerRegistry::getInstance();
     }
@@ -171,9 +164,6 @@ class CacheOptimizerDataHandler
     /**
      * Checks if the cache for the given page was already flushed in the current
      * run and if not flushCacheForPage() will be called in the parent class.
-     *
-     * @param int $pid
-     * @return void
      */
     protected function registerPageForCacheFlush(int $pid): void
     {
@@ -189,11 +179,11 @@ class CacheOptimizerDataHandler
      * Internal use, should be called by flushRelatedCacheForRecord() only!
      *
      * @param string $table
-     * @return void
-     * @throws InvalidArgumentException
-     * @throws RuntimeException
+     *
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
-    protected function registerRelatedPluginPagesForCacheFlush($table)
+    protected function registerRelatedPluginPagesForCacheFlush($table): void
     {
         if (!$this->cacheOptimizerRegistry->isRegisteredPluginTable($table)) {
             return;

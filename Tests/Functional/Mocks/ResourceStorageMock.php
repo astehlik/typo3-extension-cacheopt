@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tx\Cacheopt\Tests\Functional\Mocks;
@@ -28,9 +29,8 @@ class ResourceStorageMock extends ResourceStorage
      * @param Folder $targetFolder
      * @param string $targetFileName the destination file name $_FILES['file1']['name']
      * @param int $uploadedFileSize
-     * @return void
      */
-    protected function assureFileUploadPermissions($localFilePath, $targetFolder, $targetFileName, $uploadedFileSize)
+    protected function assureFileUploadPermissions($localFilePath, $targetFolder, $targetFileName, $uploadedFileSize): void
     {
         $this->assureFileAddPermissions($targetFolder, $targetFileName);
     }

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tx\Cacheopt\TagCollector;
@@ -20,13 +21,13 @@ use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 class ContentTagCollector implements ContentObjectPostInitHookInterface
 {
     /**
-     * Hook for post processing the initialization of ContentObjectRenderer
+     * Hook for post processing the initialization of ContentObjectRenderer.
      *
      * @param ContentObjectRenderer $parentObject Parent content object
      */
     public function postProcessContentObjectInitialization(
         ContentObjectRenderer &$parentObject
-    ) {
+    ): void {
         $tsfe = $this->getTypoScriptFrontendController();
         if (!$tsfe instanceof TypoScriptFrontendController) {
             return;

@@ -1,4 +1,5 @@
 <?php
+
 /** @noinspection PhpMissingStrictTypesDeclarationInspection */
 
 if (!defined('TYPO3_MODE')) {

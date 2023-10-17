@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tx\Cacheopt\TagCollector;
@@ -23,13 +24,6 @@ use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 class FileTagCollector
 {
-    /**
-     * @param ResourceStorage $storage
-     * @param DriverInterface $driver
-     * @param ResourceInterface $resourceObject
-     * @param $relativeToCurrentScript
-     * @param array $urlData
-     */
     public function collectTagsForPreGeneratePublicUrl(
         /** @noinspection PhpUnusedParameterInspection */
         ResourceStorage $storage,
@@ -37,7 +31,7 @@ class FileTagCollector
         ResourceInterface $resourceObject,
         $relativeToCurrentScript,
         array $urlData
-    ) {
+    ): void {
         $tsfe = $this->getTypoScriptFrontendController();
         if (!$tsfe instanceof TypoScriptFrontendController) {
             return;

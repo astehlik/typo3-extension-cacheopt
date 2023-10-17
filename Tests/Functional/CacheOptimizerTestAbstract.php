@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tx\Cacheopt\Tests\Functional;
@@ -14,10 +15,6 @@ namespace Tx\Cacheopt\Tests\Functional;
  *                                                                        */
 
 use Doctrine\DBAL\FetchMode;
-use FilesystemIterator;
-use RecursiveDirectoryIterator;
-use RuntimeException;
-use SplFileInfo;
 use Tx\Cacheopt\Tests\Functional\Mocks\ResourceStorageMock;
 use Tx\Cacheopt\Tests\Functional\Support\SiteBasedTestTrait;
 use TYPO3\CMS\Core\Database\ConnectionPool;
@@ -35,9 +32,9 @@ abstract class CacheOptimizerTestAbstract extends FunctionalTestCase
 {
     use SiteBasedTestTrait;
 
-    const PAGE_UID_REFERENCED_DIRECTORY = 131;
+    public const PAGE_UID_REFERENCED_DIRECTORY = 131;
 
-    const PAGE_UID_REFERENCED_FILE = 130;
+    public const PAGE_UID_REFERENCED_FILE = 130;
 
     /**
      * We want the folders containing the test files to be created.
@@ -55,7 +52,7 @@ abstract class CacheOptimizerTestAbstract extends FunctionalTestCase
      *
      * @var array
      */
-    protected $expectedErrorLogEntries = null;
+    protected $expectedErrorLogEntries;
 
     /**
      * The files that should be copied to the test instance.
@@ -89,7 +86,7 @@ abstract class CacheOptimizerTestAbstract extends FunctionalTestCase
     /**
      * Sets up the test environment.
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->coreExtensionsToLoad[] = 'fluid';
         $this->coreExtensionsToLoad[] = 'fluid_styled_content';
@@ -122,10 +119,10 @@ abstract class CacheOptimizerTestAbstract extends FunctionalTestCase
      *
      * @param int $pageUid
      */
-    protected function assertPageCacheIsEmpty($pageUid)
+    protected function assertPageCacheIsEmpty($pageUid): void
     {
         $cacheEntries = $this->getPageCacheRecords($pageUid);
-        $this->assertCount(0, $cacheEntries, 'Page cache for page ' . $pageUid . ' is not empty.');
+        self::assertCount(0, $cacheEntries, 'Page cache for page ' . $pageUid . ' is not empty.');
     }
 
     /**
@@ -133,7 +130,7 @@ abstract class CacheOptimizerTestAbstract extends FunctionalTestCase
      *
      * @param int $pageUid
      */
-    protected function assertPageCacheIsFilled($pageUid)
+    protected function assertPageCacheIsFilled($pageUid): void
     {
         $cacheTag = $this->buildPageCacheTag($pageUid);
 
@@ -143,13 +140,9 @@ abstract class CacheOptimizerTestAbstract extends FunctionalTestCase
             ->execute()
             ->fetchColumn(0);
 
-        $this->assertGreaterThanOrEqual(1, $entryCount, 'Page cache for page ' . $pageUid . ' is not filled.');
+        self::assertGreaterThanOrEqual(1, $entryCount, 'Page cache for page ' . $pageUid . ' is not filled.');
     }
 
-    /**
-     * @param int $pageUid
-     * @return string
-     */
     protected function buildPageCacheTag(int $pageUid): string
     {
         return 'pageId_' . $pageUid;
@@ -158,14 +151,14 @@ abstract class CacheOptimizerTestAbstract extends FunctionalTestCase
     /**
      * Copies the files defined in $filesToCopyInTestInstance to the test instance.
      *
-     * @throws RuntimeException
+     * @throws \RuntimeException
      */
-    protected function copyFilesToTestInstance()
+    protected function copyFilesToTestInstance(): void
     {
         foreach ($this->filesToCopyInTestInstance as $sourcePathToLinkInTestInstance => $destinationPathToLinkInTestInstance) {
             $sourcePath = ORIGINAL_ROOT . '/' . ltrim($sourcePathToLinkInTestInstance, '/');
             if (!file_exists($sourcePath)) {
-                throw new RuntimeException(
+                throw new \RuntimeException(
                     'Path ' . $sourcePath . ' not found',
                     1376745645
                 );
@@ -173,7 +166,7 @@ abstract class CacheOptimizerTestAbstract extends FunctionalTestCase
             $destinationPath = $this->instancePath . '/' . ltrim($destinationPathToLinkInTestInstance, '/');
             $success = copy($sourcePath, $destinationPath);
             if (!$success) {
-                throw new RuntimeException(
+                throw new \RuntimeException(
                     'Can not copy the path ' . $sourcePath . ' to ' . $destinationPath,
                     1389969623
                 );
@@ -182,11 +175,11 @@ abstract class CacheOptimizerTestAbstract extends FunctionalTestCase
     }
 
     /**
-     * Fills the page cache for the page with the given ID and makes sure
+     * Fills the page cache for the page with the given ID and makes sure.
      *
      * @param int $pageUid
      */
-    protected function fillPageCache($pageUid)
+    protected function fillPageCache($pageUid): void
     {
         $this->getFrontendResponse($pageUid)->getContent();
         $this->assertPageCacheIsFilled($pageUid);
@@ -203,7 +196,8 @@ abstract class CacheOptimizerTestAbstract extends FunctionalTestCase
      * Retrieves one page cache record that belongs to the page with the given UID.
      *
      * @param int $pageUid
-     * @return array|NULL
+     *
+     * @return array|null
      */
     protected function getPageCacheRecords($pageUid)
     {
@@ -226,16 +220,16 @@ abstract class CacheOptimizerTestAbstract extends FunctionalTestCase
     /**
      * Loads all required database fixtures from the EXT:cacheopt/Tests/Functional/Fixtures/Database directory.
      */
-    protected function loadDatabaseFixtures()
+    protected function loadDatabaseFixtures(): void
     {
         $fixtureDir = ORIGINAL_ROOT . 'typo3conf/ext/cacheopt/Tests/Functional/Fixtures/Database/';
-        $iteratorMode = FilesystemIterator::UNIX_PATHS
-            | FilesystemIterator::SKIP_DOTS
-            | FilesystemIterator::CURRENT_AS_FILEINFO;
-        $iterator = new RecursiveDirectoryIterator($fixtureDir, $iteratorMode);
+        $iteratorMode = \FilesystemIterator::UNIX_PATHS
+            | \FilesystemIterator::SKIP_DOTS
+            | \FilesystemIterator::CURRENT_AS_FILEINFO;
+        $iterator = new \RecursiveDirectoryIterator($fixtureDir, $iteratorMode);
 
         while ($iterator->valid()) {
-            /** @var $entry SplFileInfo */
+            /** @var \SplFileInfo $entry */
             $entry = $iterator->current();
             // Skip non-files/non-folders, and empty entries.
             if (!$entry->isFile() || $entry->isDir() || $entry->getFilename() === '') {

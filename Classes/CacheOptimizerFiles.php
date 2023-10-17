@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tx\Cacheopt;
@@ -13,9 +14,6 @@ namespace Tx\Cacheopt;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use InvalidArgumentException;
-use PDO;
-use RuntimeException;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Exception\NoSuchCacheGroupException;
 use TYPO3\CMS\Core\Database\ConnectionPool;
@@ -53,18 +51,17 @@ class CacheOptimizerFiles implements SingletonInterface
      * Will be called after a file is added to a directory and flushes
      * all caches related to this directory.
      *
-     * @param FileInterface|File $file
-     * @param Folder $targetFolder
-     * @return void
-     * @throws RuntimeException
+     * @param File|FileInterface $file
+     *
+     * @throws \RuntimeException
      * @throws NoSuchCacheGroupException
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     public function handleFileAddPost(
         /** @noinspection PhpUnusedParameterInspection */
         FileInterface $file,
         Folder $targetFolder
-    ) {
+    ): void {
         $this->initialize();
         $this->flushCacheForRelatedFolders($targetFolder->getStorage()->getUid(), $targetFolder->getIdentifier());
         if ($file instanceof File) {
@@ -77,18 +74,15 @@ class CacheOptimizerFiles implements SingletonInterface
      * Will be called after a file was copied.
      * The cache for all pages related to the target folder will be flushed.
      *
-     * @param FileInterface $file
-     * @param Folder $targetFolder
-     * @return void
-     * @throws RuntimeException
+     * @throws \RuntimeException
      * @throws NoSuchCacheGroupException
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     public function handleFileCopyPost(
         /** @noinspection PhpUnusedParameterInspection */
         FileInterface $file,
         Folder $targetFolder
-    ) {
+    ): void {
         $this->initialize();
         $this->flushCacheForRelatedFolders($targetFolder->getStorage()->getUid(), $targetFolder->getIdentifier());
         $this->flushCacheForAllRegisteredTags();
@@ -98,18 +92,15 @@ class CacheOptimizerFiles implements SingletonInterface
      * Will be called after a fil was created.
      * The cache for all pages related to the target folder will be flushed.
      *
-     * @param $newFileIdentifier
-     * @param Folder $targetFolder
-     * @return void
-     * @throws RuntimeException
-     * @throws InvalidArgumentException
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      * @throws NoSuchCacheGroupException
      */
     public function handleFileCreatePost(
         /** @noinspection PhpUnusedParameterInspection */
         $newFileIdentifier,
         Folder $targetFolder
-    ) {
+    ): void {
         $this->initialize();
         $this->flushCacheForRelatedFolders($targetFolder->getStorage()->getUid(), $targetFolder->getIdentifier());
         $this->flushCacheForAllRegisteredTags();
@@ -119,13 +110,11 @@ class CacheOptimizerFiles implements SingletonInterface
      * Will be called ater a file was deleted.
      * The cache for all pages related to the containing folder will be flushed.
      *
-     * @param FileInterface $file
-     * @return void
-     * @throws RuntimeException
+     * @throws \RuntimeException
      * @throws NoSuchCacheGroupException
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
-    public function handleFileDeletePost(FileInterface $file)
+    public function handleFileDeletePost(FileInterface $file): void
     {
         $this->initialize();
         $fileFolder = $file->getParentFolder();
@@ -138,12 +127,8 @@ class CacheOptimizerFiles implements SingletonInterface
      * The cache for all pages pointing to the source directory, to the target directory
      * or to the moved file will be flushed.
      *
-     * @param FileInterface $file
-     * @param Folder $targetFolder
-     * @param Folder $originalFolder
-     * @return void
-     * @throws RuntimeException
-     * @throws InvalidArgumentException
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      * @throws NoSuchCacheGroupException
      */
     public function handleFileMovePost(
@@ -151,7 +136,7 @@ class CacheOptimizerFiles implements SingletonInterface
         /** @noinspection PhpUnusedParameterInspection */
         Folder $targetFolder,
         Folder $originalFolder
-    ) {
+    ): void {
         $this->initialize();
         $this->flushCacheForRelatedFolders($originalFolder->getStorage()->getUid(), $originalFolder->getIdentifier());
         if ($file instanceof File) {
@@ -164,17 +149,14 @@ class CacheOptimizerFiles implements SingletonInterface
      * Will be called after a file was renamed.
      * Flushes the cache for all pages pointing to the file or its parent directory.
      *
-     * @param FileInterface $file
-     * @param $targetFolder
-     * @return void
      * @throws NoSuchCacheGroupException
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     public function handleFileRenamePost(
         FileInterface $file,
         /** @noinspection PhpUnusedParameterInspection */
         $targetFolder
-    ) {
+    ): void {
         $this->initialize();
         if ($file instanceof File) {
             $this->registerFileForCacheFlush($file);
@@ -187,16 +169,15 @@ class CacheOptimizerFiles implements SingletonInterface
      * Flushes the cache for all pages pointing to the file or its parent directory.
      *
      * @param FileInterface $file
-     * @param $localFilePath
-     * @return void
+     *
      * @throws NoSuchCacheGroupException
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     public function handleFileReplacePost(
         $file,
         /** @noinspection PhpUnusedParameterInspection */
         $localFilePath
-    ) {
+    ): void {
         $this->initialize();
         if ($file instanceof File) {
             $this->registerFileForCacheFlush($file);
@@ -208,17 +189,14 @@ class CacheOptimizerFiles implements SingletonInterface
      * Will be called after the content was changed in the given file.
      * Flushes the cache for all pages pointing to the file or its parent directory.
      *
-     * @param FileInterface $file
-     * @param $contents
-     * @return void
      * @throws NoSuchCacheGroupException
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     public function handleFileSetContentsPost(
         FileInterface $file,
         /** @noinspection PhpUnusedParameterInspection */
         $contents
-    ) {
+    ): void {
         $this->initialize();
         if ($file instanceof File) {
             $this->registerFileForCacheFlush($file);
@@ -229,10 +207,9 @@ class CacheOptimizerFiles implements SingletonInterface
     /**
      * Clears the cache for all registered page UIDs.
      *
-     * @return void
      * @throws NoSuchCacheGroupException
      */
-    protected function flushCacheForAllRegisteredTags()
+    protected function flushCacheForAllRegisteredTags(): void
     {
         $flushCacheTags = array_unique($this->flushCacheTags);
         $this->flushCacheTags = [];
@@ -244,9 +221,6 @@ class CacheOptimizerFiles implements SingletonInterface
     /**
      * Searches for all records pointing to the given folder and flushes
      * the related page caches.
-     *
-     * @param int $storageUid
-     * @param string $folderIdentifier
      */
     protected function flushCacheForRelatedFolders(int $storageUid, string $folderIdentifier): void
     {
@@ -261,7 +235,7 @@ class CacheOptimizerFiles implements SingletonInterface
             ->from('sys_file_collection')
             ->where($queryBuilder->expr()->eq('deleted', 0))
             ->andWhere('type', 'folder')
-            ->andWhere('storage', $queryBuilder->createNamedParameter($storageUid, PDO::PARAM_INT))
+            ->andWhere('storage', $queryBuilder->createNamedParameter($storageUid, \PDO::PARAM_INT))
             ->andWhere('folder', $queryBuilder->createNamedParameter($folderIdentifier));
 
         $fileCollectionResult = $queryBuilder->execute();
@@ -273,10 +247,9 @@ class CacheOptimizerFiles implements SingletonInterface
     /**
      * Initializes all required classes.
      *
-     * @return void
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
-    protected function initialize()
+    protected function initialize(): void
     {
         if ($this->cacheOptimizerRegistry) {
             return;
@@ -288,10 +261,8 @@ class CacheOptimizerFiles implements SingletonInterface
 
     /**
      * Registers the given file for cache flushing.
-     *
-     * @param File $file
      */
-    protected function registerFileForCacheFlush(File $file)
+    protected function registerFileForCacheFlush(File $file): void
     {
         $this->registerRecordForCacheFlushing('sys_file', $file->getUid());
     }
@@ -303,7 +274,7 @@ class CacheOptimizerFiles implements SingletonInterface
      * @param string $table
      * @param int $uid
      */
-    protected function registerRecordForCacheFlushing($table, $uid)
+    protected function registerRecordForCacheFlushing($table, $uid): void
     {
         if ($this->cacheOptimizerRegistry->isProcessedRecord($table, $uid)) {
             return;

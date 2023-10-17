@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tx\CacheoptTest\Controller;
@@ -32,8 +33,6 @@ class RecordController extends ActionController
 
     /**
      * We do not need a view since we only render a dummy string.
-     *
-     * @return null
      */
     protected function resolveView()
     {

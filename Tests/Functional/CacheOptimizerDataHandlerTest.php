@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tx\Cacheopt\Tests\Functional;
@@ -16,42 +17,40 @@ namespace Tx\Cacheopt\Tests\Functional;
 /**
  * Functional tests for the data handler cache optimizer.
  */
-class CacheOptimizerTest extends CacheOptimizerTestAbstract
+class CacheOptimizerDataHandlerTest extends CacheOptimizerTestAbstract
 {
-    const CACHEOPT_RECORD_UID = 1;
+    public const CACHEOPT_RECORD_UID = 1;
 
-    const CONTENT_UID_REFERENCED = 95;
+    public const CONTENT_UID_REFERENCED = 95;
 
-    const CONTENT_UID_SIMPLE = 94;
+    public const CONTENT_UID_SIMPLE = 94;
 
-    const FILE_METADATA_UID_REFERENCED = 28;
+    public const FILE_METADATA_UID_REFERENCED = 28;
 
-    const FILE_METADATA_UID_REFERENCED_IN_DIRECTORY = 26;
+    public const FILE_METADATA_UID_REFERENCED_IN_DIRECTORY = 26;
 
-    const PAGE_UID_CONTAINING_EXT_CONTENT = 136;
+    public const PAGE_UID_CONTAINING_EXT_CONTENT = 136;
 
-    const PAGE_UID_CONTAINING_EXT_PLUGIN = 134;
+    public const PAGE_UID_CONTAINING_EXT_PLUGIN = 134;
 
-    const PAGE_UID_CONTAINING_MENU = 133;
+    public const PAGE_UID_CONTAINING_MENU = 133;
 
-    const PAGE_UID_NORMAL = 129;
+    public const PAGE_UID_NORMAL = 129;
 
-    const PAGE_UID_REFERENCED_IN_MENU = 132;
+    public const PAGE_UID_REFERENCED_IN_MENU = 132;
 
-    const PAGE_UID_REFERENCED_IN_MENU_IN_SUBLEVEL = 139;
+    public const PAGE_UID_REFERENCED_IN_MENU_IN_SUBLEVEL = 139;
 
-    const PAGE_UID_REFERENCING_CONTENT = 137;
+    public const PAGE_UID_REFERENCING_CONTENT = 137;
 
-    const PAGE_UID_ROOT = 128;
+    public const PAGE_UID_ROOT = 128;
 
     /**
      * If content is edited on a page the cache for this page is cleared.
      *
      * This works by default in TYPO3.
-     *
-     * @test
      */
-    public function contentChangeClearsCacheForContainingPage()
+    public function testContentChangeClearsCacheForContainingPage(): void
     {
         $this->fillPageCache(self::PAGE_UID_NORMAL);
         $this->getActionService()->modifyRecord(
@@ -65,10 +64,8 @@ class CacheOptimizerTest extends CacheOptimizerTestAbstract
     /**
      * If a content element changes the cache is cleared for all pages that contain
      * record content elements that point to the changed content.
-     *
-     * @test
      */
-    public function contentChangeClearsCacheForRelatedRecordContents()
+    public function testContentChangeClearsCacheForRelatedRecordContents(): void
     {
         $this->fillPageCache(self::PAGE_UID_REFERENCING_CONTENT);
         $this->getActionService()->modifyRecord(
@@ -83,10 +80,8 @@ class CacheOptimizerTest extends CacheOptimizerTestAbstract
      * If a sys_file_metadata record is changed the directory of the file is detected
      * and the cache of all pages is cleared where a reference to this directory is
      * used in the content elements.
-     *
-     * @test
      */
-    public function fileMetadataChangeClearsCacheForPagesReferencingToTheDirectory()
+    public function testFileMetadataChangeClearsCacheForPagesReferencingToTheDirectory(): void
     {
         $this->fillPageCache(self::PAGE_UID_REFERENCED_DIRECTORY);
         $this->getActionService()->modifyRecord(
@@ -100,10 +95,8 @@ class CacheOptimizerTest extends CacheOptimizerTestAbstract
     /**
      * If a sys_file_metadata record is changed the cache of all pages is cleared where
      * a reference to this file is used in the content elements.
-     *
-     * @test
      */
-    public function fileMetadataChangeClearsCacheForPagesReferencingToTheFile()
+    public function testFileMetadataChangeClearsCacheForPagesReferencingToTheFile(): void
     {
         $this->fillPageCache(self::PAGE_UID_REFERENCED_FILE);
         $this->getActionService()->modifyRecord(
@@ -117,10 +110,8 @@ class CacheOptimizerTest extends CacheOptimizerTestAbstract
     /**
      * When a page is changed the cache is cleared for all pages that contain
      * a menu that points to this page.
-     *
-     * @test
      */
-    public function pageChangeClearsCacheForRelatedMenusOnDifferentLevel()
+    public function testPageChangeClearsCacheForRelatedMenusOnDifferentLevel(): void
     {
         $this->fillPageCache(self::PAGE_UID_CONTAINING_MENU);
         $this->getActionService()->modifyRecord(
@@ -136,10 +127,8 @@ class CacheOptimizerTest extends CacheOptimizerTestAbstract
      * a menu that points to this page.
      *
      * This works by default in TYPO3.
-     *
-     * @test
      */
-    public function pageChangeClearsCacheForRelatedMenusOnSameLevel()
+    public function testPageChangeClearsCacheForRelatedMenusOnSameLevel(): void
     {
         $this->fillPageCache(self::PAGE_UID_CONTAINING_MENU);
         $this->getActionService()->modifyRecord(
@@ -153,10 +142,8 @@ class CacheOptimizerTest extends CacheOptimizerTestAbstract
     /**
      * When a record is changed the cache should be cleared for all pages where
      * a related plugin is present in the content elements.
-     *
-     * @test
      */
-    public function recordChangeClearsCacheForPagesContainingRelatedContents()
+    public function testRecordChangeClearsCacheForPagesContainingRelatedContents(): void
     {
         $this->fillPageCache(self::PAGE_UID_CONTAINING_EXT_CONTENT);
         $this->getActionService()->modifyRecord(
@@ -170,10 +157,8 @@ class CacheOptimizerTest extends CacheOptimizerTestAbstract
     /**
      * When a record is changed the cache should be cleared for all pages where
      * a related plugin is present in the content elements.
-     *
-     * @test
      */
-    public function recordChangeClearsCacheForPagesContainingRelatedPlugins()
+    public function testRecordChangeClearsCacheForPagesContainingRelatedPlugins(): void
     {
         $this->fillPageCache(self::PAGE_UID_CONTAINING_EXT_PLUGIN);
         $this->getActionService()->modifyRecord(
