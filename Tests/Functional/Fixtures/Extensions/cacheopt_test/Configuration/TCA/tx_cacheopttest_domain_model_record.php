@@ -14,7 +14,6 @@ return [
     ],
     'interface' => [
         'always_description' => 0,
-        'showRecordFieldList' => 'title',
     ],
     'columns' => [
         'title' => [
