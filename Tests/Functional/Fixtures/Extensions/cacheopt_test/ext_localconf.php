@@ -8,14 +8,14 @@ if (!defined('TYPO3_MODE')) {
 
 /** @uses \Tx\CacheoptTest\Controller\RecordController::displayAction() */
 TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
-    'Tx.CacheoptTest',
+    'CacheoptTest',
     'RecordRenderPlugin',
     ['Record' => 'display']
 );
 
 /** @uses \Tx\CacheoptTest\Controller\RecordController::displayAction() */
 TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
-    'Tx.CacheoptTest',
+    'CacheoptTest',
     'RecordRenderContent',
     ['Record' => 'display'],
     [],

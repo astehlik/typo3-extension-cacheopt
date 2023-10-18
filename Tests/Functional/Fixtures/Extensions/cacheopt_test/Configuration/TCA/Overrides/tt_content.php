@@ -9,13 +9,13 @@ if (!defined('TYPO3_MODE')) {
 }
 
 ExtensionUtility::registerPlugin(
-    'Tx.CacheoptTest',
+    'CacheoptTest',
     'RecordRenderPlugin',
     'Cacheopt - Record renderer plugin'
 );
 
 ExtensionUtility::registerPlugin(
-    'Tx.CacheoptTest',
+    'CacheoptTest',
     'RecordRenderContent',
     'Cacheopt - Record renderer content'
 );
