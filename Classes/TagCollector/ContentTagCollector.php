@@ -51,11 +51,8 @@ class ContentTagCollector implements ContentObjectPostInitHookInterface
         $tsfe->addCacheTags($cacheTags);
     }
 
-    /**
-     * @return TypoScriptFrontendController
-     */
-    protected function getTypoScriptFrontendController()
+    protected function getTypoScriptFrontendController(): ?TypoScriptFrontendController
     {
-        return $GLOBALS['TSFE'];
+        return $GLOBALS['TSFE'] ?? null;
     }
 }
