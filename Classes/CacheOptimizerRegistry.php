@@ -14,7 +14,6 @@ namespace Tx\Cacheopt;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -32,61 +31,44 @@ class CacheOptimizerRegistry implements SingletonInterface
      * array(
      *   'ty_myext_mytable' => 'myext_contenttype'
      * ).
-     *
-     * @var array
      */
-    protected $contentTypesByTable = [];
-
-    /**
-     * @var DatabaseConnection
-     */
-    protected $databaseConnection;
+    protected array $contentTypesByTable = [];
 
     /**
      * Array containing UIDs of pages for which the cache has been flushed already.
-     *
-     * @var array
      */
-    protected $flushedPageUids = [];
+    protected array $flushedPageUids = [];
 
     /**
      * Array containing information which table is related to which plugin type:
      * array(
      *   'ty_myext_mytable' => 'myext_plugintype'
      * ).
-     *
-     * @var array
      */
-    protected $pluginTypesByTable = [];
+    protected array $pluginTypesByTable = [];
 
     /**
      * Array containing the identifiers of the folders for which the cache has already been flushed.
      * array(
      *   'storageUid' => array('directoryIdentifier' => 1)
      * ).
-     *
-     * @var array
      */
-    protected $processedFolders = [];
+    protected array $processedFolders = [];
 
     /**
      * Array containing the records that already have been processed:
      * array(
      *   'tablename' => array('recordUid' => 1)
      * ).
-     *
-     * @var array
      */
-    protected $processedRecords = [];
+    protected array $processedRecords = [];
 
     /**
      * Returns an instance of the CacheOptimizerRegistry.
      *
-     * @return CacheOptimizerRegistry
-     *
      * @throws \InvalidArgumentException
      */
-    public static function getInstance()
+    public static function getInstance(): self
     {
         return GeneralUtility::makeInstance('Tx\\Cacheopt\\CacheOptimizerRegistry');
     }
@@ -94,10 +76,8 @@ class CacheOptimizerRegistry implements SingletonInterface
     /**
      * Returns an array containing all content types that belong to the given
      * table or NULL if no content types are registered.
-     *
-     * @param string $table
      */
-    public function getContentTypesForTable($table): array
+    public function getContentTypesForTable(string $table): array
     {
         if (!array_key_exists($table, $this->contentTypesByTable)) {
             return [];
@@ -108,10 +88,8 @@ class CacheOptimizerRegistry implements SingletonInterface
 
     /**
      * Returns an array containing all page UIDs for which the cache was flushed already.
-     *
-     * @return array
      */
-    public function getFlushedCachePageUids()
+    public function getFlushedCachePageUids(): array
     {
         return array_unique($this->flushedPageUids);
     }
@@ -119,10 +97,8 @@ class CacheOptimizerRegistry implements SingletonInterface
     /**
      * Returns an array containing all plugin types that belong to the given
      * table or NULL if no plugin types are registered.
-     *
-     * @param string $table
      */
-    public function getPluginTypesForTable($table): array
+    public function getPluginTypesForTable(string $table): array
     {
         if (!array_key_exists($table, $this->pluginTypesByTable)) {
             return [];
@@ -133,28 +109,18 @@ class CacheOptimizerRegistry implements SingletonInterface
 
     /**
      * Returns TRUE if the given folder in the given storage was already processed.
-     *
-     * @param int $storageUid
-     * @param string $folderIdentifier
-     *
-     * @return bool
      */
-    public function isProcessedFolder($storageUid, $folderIdentifier)
+    public function isProcessedFolder(int $storageUid, string $folderIdentifier): bool
     {
-        return isset($this->processedFolders[(int)$storageUid][$folderIdentifier]);
+        return isset($this->processedFolders[$storageUid][$folderIdentifier]);
     }
 
     /**
      * Return TRUE if the record with the given UID in the given table was already processed.
-     *
-     * @param string $table
-     * @param int $uid
-     *
-     * @return bool
      */
-    public function isProcessedRecord($table, $uid)
+    public function isProcessedRecord(string $table, int $uid): bool
     {
-        return isset($this->processedRecords[$table][(int)$uid]);
+        return isset($this->processedRecords[$table][$uid]);
     }
 
     public function isRegisteredPluginTable(string $table): bool
@@ -168,17 +134,13 @@ class CacheOptimizerRegistry implements SingletonInterface
 
     /**
      * Returns TRUE if the cache for the page with the given UID was already flushed.
-     *
-     * @param int $pid
-     *
-     * @return bool
      */
-    public function pageCacheIsFlushed($pid)
+    public function pageCacheIsFlushed(int $pid): bool
     {
-        $pid = (int)$pid;
         if ($pid === 0) {
             return true;
         }
+
         return in_array($pid, $this->flushedPageUids, true) !== false;
     }
 
@@ -190,7 +152,7 @@ class CacheOptimizerRegistry implements SingletonInterface
      *
      * @api
      */
-    public function registerContentForTable($table, $contentType): void
+    public function registerContentForTable(string $table, string $contentType): void
     {
         $this->contentTypesByTable[$table][] = $contentType;
     }
@@ -198,10 +160,8 @@ class CacheOptimizerRegistry implements SingletonInterface
     /**
      * Let the registry know that the given tables are related to the given content type.
      * All tables are automatically excluded from refindex traversal.
-     *
-     * @param string $contentType
      */
-    public function registerContentForTables(array $tables, $contentType): void
+    public function registerContentForTables(array $tables, string $contentType): void
     {
         foreach ($tables as $table) {
             $this->registerContentForTable($table, $contentType);
@@ -220,12 +180,10 @@ class CacheOptimizerRegistry implements SingletonInterface
 
     /**
      * The cache for the page with the given ID was flushed.
-     *
-     * @param int $pid
      */
-    public function registerPageWithFlushedCache($pid): void
+    public function registerPageWithFlushedCache(int $pid): void
     {
-        $this->flushedPageUids[] = (int)$pid;
+        $this->flushedPageUids[] = $pid;
     }
 
     /**
@@ -237,7 +195,7 @@ class CacheOptimizerRegistry implements SingletonInterface
      *
      * @api
      */
-    public function registerPluginForTable($table, $listType): void
+    public function registerPluginForTable(string $table, string $listType): void
     {
         $this->pluginTypesByTable[$table][] = $listType;
     }
@@ -246,11 +204,9 @@ class CacheOptimizerRegistry implements SingletonInterface
      * Let the registry know that the given tables are related to the given plugin type.
      * All tables are automatically excluded from refindex traversal.
      *
-     * @param string $listType
-     *
      * @api
      */
-    public function registerPluginForTables(array $tables, $listType): void
+    public function registerPluginForTables(array $tables, string $listType): void
     {
         foreach ($tables as $table) {
             $this->registerPluginForTable($table, $listType);
@@ -259,28 +215,17 @@ class CacheOptimizerRegistry implements SingletonInterface
 
     /**
      * The folder in the given storage with the given identifier has been processed.
-     *
-     * @param int $storageUid
-     * @param string $folderIdentifier
      */
-    public function registerProcessedFolder($storageUid, $folderIdentifier): void
+    public function registerProcessedFolder(int $storageUid, string $folderIdentifier): void
     {
-        $this->processedFolders[(int)$storageUid][$folderIdentifier] = true;
+        $this->processedFolders[$storageUid][$folderIdentifier] = true;
     }
 
     /**
      * The record in the given table with the given uid has been processed.
-     *
-     * @param string $table
-     * @param int $uid
      */
-    public function registerProcessedRecord($table, $uid): void
+    public function registerProcessedRecord(string $table, int $uid): void
     {
-        $this->processedRecords[$table][(int)$uid] = true;
-    }
-
-    protected function initialize(): void
-    {
-        $this->databaseConnection = $GLOBALS['TYPO3_DB'];
+        $this->processedRecords[$table][$uid] = true;
     }
 }

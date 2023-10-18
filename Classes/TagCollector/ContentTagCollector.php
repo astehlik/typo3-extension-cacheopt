@@ -37,7 +37,7 @@ class ContentTagCollector implements ContentObjectPostInitHookInterface
         $contentData = $parentObject->data;
 
         $table = $parentObject->getCurrentTable();
-        $uid = (int)$contentData['uid'];
+        $uid = (int)($contentData['uid'] ?? 0);
         if ($table === '' || $uid === 0) {
             return;
         }

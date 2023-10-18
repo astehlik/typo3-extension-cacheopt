@@ -25,15 +25,11 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class CacheApi implements SingletonInterface
 {
-    /**
-     * @var CacheManager
-     */
-    protected $cacheManager;
+    protected ?CacheManager $cacheManager = null;
 
     /**
      * Flushes the cache for the given page.
      *
-     * @param int $pageId
      * @param bool $useDataHandler If this is true the DataHandler will be used
      *                             instead of the CacheManager for cache clearing. This makes sure that the
      *                             hooks registered for clearPageCacheEval are called (e.g. those of realurl).
@@ -41,14 +37,15 @@ class CacheApi implements SingletonInterface
      * @throws NoSuchCacheGroupException
      * @throws \InvalidArgumentException
      */
-    public function flushCacheForPage($pageId, $useDataHandler): void
+    public function flushCacheForPage(int $pageId, bool $useDataHandler): void
     {
         if ($useDataHandler) {
             $this->flushCacheForRecordWithDataHandler('pages', $pageId);
-        } else {
-            $this->initializeCacheManager();
-            $this->cacheManager->flushCachesInGroupByTag('pages', 'pageId_' . $pageId);
+            return;
         }
+
+        $this->initializeCacheManager();
+        $this->cacheManager->flushCachesInGroupByTag('pages', 'pageId_' . $pageId);
     }
 
     /**
@@ -58,19 +55,13 @@ class CacheApi implements SingletonInterface
      * This process makes sure that the hooks registered for clearPageCacheEval
      * are called (e.g. those of cacheopt or those of realurl).
      *
-     * @param string $tablename
-     * @param int $uid
-     *
      * @throws \InvalidArgumentException
      */
-    public function flushCacheForRecordWithDataHandler($tablename, $uid): void
+    public function flushCacheForRecordWithDataHandler(string $tablename, int $uid): void
     {
         $tce = GeneralUtility::makeInstance(DataHandler::class);
-        $tce->stripslashes_values = 0;
         $tce->start([], []);
 
-        /** @noinspection PhpInternalEntityUsedInspection Since the clear_cache() method is deprecated we need
-         * to used this internal method. */
         $tce->registerRecordIdForPageCacheClearing($tablename, $uid);
         $tce->process_datamap();
     }

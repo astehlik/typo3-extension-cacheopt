@@ -1,0 +1,3 @@
+sys_file_collection,,,,,,,,,
+,uid,pid,crdate,tstamp,cruser_id,title,type,storage,folder
+,1,131,1401292072,1401292050,1,testdirectory,folder,1,/testdirectory_referenced/

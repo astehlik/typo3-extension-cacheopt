@@ -14,6 +14,7 @@ namespace Tx\CacheoptTest\Controller;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 
 /**
@@ -23,12 +24,10 @@ class RecordController extends ActionController
 {
     /**
      * Display a dummy string.
-     *
-     * @return string
      */
-    public function displayAction()
+    public function displayAction(): ResponseInterface
     {
-        return 'test';
+        return $this->htmlResponse('test');
     }
 
     /**

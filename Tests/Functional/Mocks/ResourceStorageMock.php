@@ -30,8 +30,12 @@ class ResourceStorageMock extends ResourceStorage
      * @param string $targetFileName the destination file name $_FILES['file1']['name']
      * @param int $uploadedFileSize
      */
-    protected function assureFileUploadPermissions($localFilePath, $targetFolder, $targetFileName, $uploadedFileSize): void
-    {
+    protected function assureFileUploadPermissions(
+        $localFilePath,
+        $targetFolder,
+        $targetFileName,
+        $uploadedFileSize
+    ): void {
         $this->assureFileAddPermissions($targetFolder, $targetFileName);
     }
 }

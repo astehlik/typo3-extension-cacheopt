@@ -14,7 +14,6 @@ namespace Tx\Cacheopt;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Exception\NoSuchCacheGroupException;
 use TYPO3\CMS\Core\Database\ConnectionPool;
@@ -34,7 +33,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * This cache optimizer hooks into the ResourceStorage and clears the cache
  * for all pages pointing to a changed file or folder.
  */
-class CacheOptimizerFiles implements EventSubscriberInterface
+class CacheOptimizerFiles
 {
     protected CacheManager $cacheManager;
 
@@ -49,28 +48,6 @@ class CacheOptimizerFiles implements EventSubscriberInterface
     {
         $this->cacheManager = $cacheManager;
         $this->cacheOptimizerRegistry = $cacheOptimizerRegistry;
-    }
-
-    public static function getSubscribedEvents(): array
-    {
-        return [
-            /** @uses handleFileAddPost() */
-            AfterFileAddedEvent::class => 'handleFileAddPost',
-            /** @uses handleFileSetContentsPost() */
-            AfterFileContentsSetEvent::class => 'handleFileSetContentsPost',
-            /** @uses handleFileCopyPost() */
-            AfterFileCopiedEvent::class => 'handleFileCopyPost',
-            /** @uses handleFileCreatePost() */
-            AfterFileCreatedEvent::class => 'handleFileCreatePost',
-            /** @uses handleFileDeletePost() */
-            AfterFileDeletedEvent::class => 'handleFileDeletePost',
-            /** @uses handleFileMovePost() */
-            AfterFileMovedEvent::class => 'handleFileMovePost',
-            /** @uses handleFileRenamePost() */
-            AfterFileRenamedEvent::class => 'handleFileRenamePost',
-            /** @uses handleFileReplacePost() */
-            AfterFileReplacedEvent::class => 'handleFileReplacePost',
-        ];
     }
 
     /**

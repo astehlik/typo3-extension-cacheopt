@@ -14,18 +14,16 @@ namespace Tx\Cacheopt\TagCollector;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
 use TYPO3\CMS\Core\Resource\Event\GeneratePublicUrlForResourceEvent;
 use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Resource\FileReference;
 use TYPO3\CMS\Core\Resource\ProcessedFile;
-use TYPO3\CMS\Core\Resource\ResourceInterface;
-use TYPO3\CMS\Core\Resource\ResourceStorage;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 class FileTagCollector
 {
-    public function collectTagsForPreGeneratePublicUrl(GeneratePublicUrlForResourceEvent $event): void {
+    public function collectTagsForPreGeneratePublicUrl(GeneratePublicUrlForResourceEvent $event): void
+    {
         $tsfe = $this->getTypoScriptFrontendController();
         if (!$tsfe instanceof TypoScriptFrontendController) {
             return;

@@ -4,8 +4,5 @@ services:
     autoconfigure: true
     public: false
 
-  Tx\Cacheopt\:
+  Tx\CacheoptTest\:
     resource: '../Classes/*'
-
-  Tx\Cacheopt\CacheOptimizerFiles:
-    public: true

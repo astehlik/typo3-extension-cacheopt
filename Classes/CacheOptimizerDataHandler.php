@@ -49,7 +49,8 @@ class CacheOptimizerDataHandler
      * adds related records to the cache clearing queue.
      *
      * @param array $parameters Parameters array containing:
-     *                          pageIdArray => reference to indexed array containing the records for which the cache should be cleared
+     *                          pageIdArray => reference to indexed array containing the records for which the cache
+     *                          should be cleared
      *                          table => the name of the table of the current record
      *                          uid =>  the uid of the record
      *                          functionID => is always clear_cache()

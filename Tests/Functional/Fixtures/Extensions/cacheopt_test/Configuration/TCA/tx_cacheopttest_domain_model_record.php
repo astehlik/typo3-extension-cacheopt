@@ -12,9 +12,7 @@ return [
         'delete' => 'deleted',
         'searchFields' => 'title',
     ],
-    'interface' => [
-        'always_description' => 0,
-    ],
+    'interface' => ['always_description' => 0],
     'columns' => [
         'title' => [
             'label' => 'Title',
@@ -26,8 +24,6 @@ return [
             ],
         ],
     ],
-    'types' => [
-        '0' => ['showitem' => 'title'],
-    ],
+    'types' => ['0' => ['showitem' => 'title']],
     'palettes' => [],
 ];

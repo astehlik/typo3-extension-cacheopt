@@ -14,7 +14,6 @@ namespace Tx\Cacheopt\Tests\Functional;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use Doctrine\DBAL\FetchMode;
 use Tx\Cacheopt\Tests\Functional\Mocks\ResourceStorageMock;
 use Tx\Cacheopt\Tests\Functional\Support\SiteBasedTestTrait;
 use TYPO3\CMS\Core\Database\ConnectionPool;
@@ -23,6 +22,7 @@ use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Resource\ResourceStorage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\TestingFramework\Core\Functional\Framework\DataHandling\ActionService;
+use TYPO3\TestingFramework\Core\Functional\Framework\Frontend\InternalRequest;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 /**
@@ -49,17 +49,13 @@ abstract class CacheOptimizerTestAbstract extends FunctionalTestCase
 
     /**
      * We do not expect any error log entries.
-     *
-     * @var array
      */
-    protected $expectedErrorLogEntries;
+    protected array $expectedErrorLogEntries;
 
     /**
      * The files that should be copied to the test instance.
-     *
-     * @var array
      */
-    protected $filesToCopyInTestInstance = [
+    protected array $filesToCopyInTestInstance = [
         'typo3conf/ext/cacheopt/Tests/Functional/Fixtures/Files/fileadmin/testdirectory/testfile.txt' => 'fileadmin/testdirectory/testfile.txt',
         'typo3conf/ext/cacheopt/Tests/Functional/Fixtures/Files/fileadmin/testdirectory/testfile_referenced.txt' => 'fileadmin/testdirectory/testfile_referenced.txt',
         'typo3conf/ext/cacheopt/Tests/Functional/Fixtures/Files/fileadmin/testdirectory_referenced/file_in_referenced_dir.txt' => 'fileadmin/testdirectory_referenced/file_in_referenced_dir.txt',
@@ -99,8 +95,6 @@ abstract class CacheOptimizerTestAbstract extends FunctionalTestCase
             $this->buildDatabaseCacheConfig()
         );
 
-        define('TX_CACHEOPT_FUNCTIONAL_TEST', true);
-
         parent::setUp();
 
         unset($GLOBALS['TYPO3_CONF_VARS']['LOG']);
@@ -110,16 +104,14 @@ abstract class CacheOptimizerTestAbstract extends FunctionalTestCase
 
         $this->writeSiteConfiguration(
             'website-local',
-            $this->buildSiteConfiguration(128, 'https://website.local/')
+            $this->buildSiteConfiguration(128, '/')
         );
     }
 
     /**
      * Asserts that the page cache for the given page is empty.
-     *
-     * @param int $pageUid
      */
-    protected function assertPageCacheIsEmpty($pageUid): void
+    protected function assertPageCacheIsEmpty(int $pageUid): void
     {
         $cacheEntries = $this->getPageCacheRecords($pageUid);
         self::assertCount(0, $cacheEntries, 'Page cache for page ' . $pageUid . ' is not empty.');
@@ -127,10 +119,8 @@ abstract class CacheOptimizerTestAbstract extends FunctionalTestCase
 
     /**
      * Asserts that the page cache for the given page is filled.
-     *
-     * @param int $pageUid
      */
-    protected function assertPageCacheIsFilled($pageUid): void
+    protected function assertPageCacheIsFilled(int $pageUid): void
     {
         $cacheTag = $this->buildPageCacheTag($pageUid);
 
@@ -138,7 +128,7 @@ abstract class CacheOptimizerTestAbstract extends FunctionalTestCase
         $entryCount = (int)$builder->count('id')
             ->where($builder->expr()->eq('tag', $builder->createNamedParameter($cacheTag)))
             ->execute()
-            ->fetchColumn(0);
+            ->fetchOne();
 
         self::assertGreaterThanOrEqual(1, $entryCount, 'Page cache for page ' . $pageUid . ' is not filled.');
     }
@@ -176,30 +166,25 @@ abstract class CacheOptimizerTestAbstract extends FunctionalTestCase
 
     /**
      * Fills the page cache for the page with the given ID and makes sure.
-     *
-     * @param int $pageUid
      */
-    protected function fillPageCache($pageUid): void
+    protected function fillPageCache(int $pageUid): void
     {
-        $this->getFrontendResponse($pageUid)->getContent();
+        $request = (new InternalRequest())->withPageId($pageUid);
+        $this->executeFrontendSubRequest($request);
         $this->assertPageCacheIsFilled($pageUid);
     }
 
     protected function getActionService(): ActionService
     {
-        $this->setUpBackendUserFromFixture(1);
+        $this->setUpBackendUserMain();
         $GLOBALS['LANG'] = GeneralUtility::makeInstance(LanguageService::class);
         return GeneralUtility::makeInstance(ActionService::class);
     }
 
     /**
      * Retrieves one page cache record that belongs to the page with the given UID.
-     *
-     * @param int $pageUid
-     *
-     * @return array|null
      */
-    protected function getPageCacheRecords($pageUid)
+    protected function getPageCacheRecords(int $pageUid): array
     {
         $cacheTag = $this->buildPageCacheTag($pageUid);
 
@@ -214,7 +199,7 @@ abstract class CacheOptimizerTestAbstract extends FunctionalTestCase
             )
             ->andWhere($builder->expr()->eq('tag', $builder->createNamedParameter($cacheTag)));
 
-        return $builder->execute()->fetchAll(FetchMode::ASSOCIATIVE);
+        return $builder->execute()->fetchAssociative() ?: [];
     }
 
     /**
@@ -236,12 +221,18 @@ abstract class CacheOptimizerTestAbstract extends FunctionalTestCase
                 $iterator->next();
                 continue;
             }
-            $this->importDataSet($entry->getPathname());
+            $this->importCSVDataSet($entry->getPathname());
             $iterator->next();
         }
     }
 
-    private function buildDatabaseCacheConfig()
+    protected function setUpBackendUserMain(): void
+    {
+        $this->importCSVDataSet(ORIGINAL_ROOT . 'typo3conf/ext/cacheopt/Tests/Functional/Fixtures/be_user_main.csv');
+        $this->setUpBackendUser(1);
+    }
+
+    private function buildDatabaseCacheConfig(): array
     {
         return [
             'SYS' => [

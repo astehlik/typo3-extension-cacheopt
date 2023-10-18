@@ -1,0 +1,5 @@
+sys_file,,,,,,,,,,,,,,,,,,
+,uid,pid,tstamp,type,storage,identifier,extension,mime_type,name,sha1,size,creation_date,modification_date,missing,metadata,identifier_hash,folder_hash,last_indexed
+,24,0,1401290235,0,1,/testdirectory/testfile.txt,txt,inode/x-empty,testfile.txt,da39a3ee5e6b4b0d3255bfef95601890afd80709,0,1401290235,1401290235,0,0,fd9be7be6baaecd287e444c38f3035d64b7ddae0,eda6b9672a60fd3457a0c48947e834c4fe8861f6,0
+,25,0,1401290243,0,1,/testdirectory/testfile_referenced.txt,txt,inode/x-empty,testfile_referenced.txt,da39a3ee5e6b4b0d3255bfef95601890afd80709,0,1401290243,1401290243,0,0,115e2a38284071843050b39b30676a4b9e8bc103,eda6b9672a60fd3457a0c48947e834c4fe8861f6,0
+,27,0,1401391189,0,1,/testdirectory_referenced/file_in_referenced_dir.txt,txt,inode/x-empty,file_in_referenced_dir.txt,da39a3ee5e6b4b0d3255bfef95601890afd80709,0,1401290258,1401290258,0,0,3c656314b64a0ee0774ef4fcda88b4dceb171c8e,9978c24c7775f7ab90c0f475d633601263a3d8d2,0

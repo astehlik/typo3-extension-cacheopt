@@ -35,20 +35,11 @@ class CacheOptimizerFilesTest extends CacheOptimizerTestAbstract
 
     public const RESOURCE_STORAGE_UID = 1;
 
-    /**
-     * @var CacheOptimizerFiles
-     */
-    protected $cacheOptimizerFiles;
+    protected CacheOptimizerFiles $cacheOptimizerFiles;
 
-    /**
-     * @var ExtendedFileUtility
-     */
-    protected $fileProcessor;
+    protected ExtendedFileUtility $fileProcessor;
 
-    /**
-     * @var StorageRepository
-     */
-    protected $storageRepository;
+    protected StorageRepository $storageRepository;
 
     /**
      * Initializes required classes.
@@ -56,12 +47,13 @@ class CacheOptimizerFilesTest extends CacheOptimizerTestAbstract
     protected function setUp(): void
     {
         parent::setUp();
-        $this->storageRepository = GeneralUtility::makeInstance(StorageRepository::class);
+
+        $this->storageRepository = $this->getContainer()->get(StorageRepository::class);
         $this->fileProcessor = GeneralUtility::makeInstance(ExtendedFileUtility::class);
-        $this->cacheOptimizerFiles = GeneralUtility::makeInstance(CacheOptimizerFiles::class);
+        $this->cacheOptimizerFiles = $this->getContainer()->get(CacheOptimizerFiles::class);
         $this->initFileProcessor();
 
-        $this->setUpBackendUserFromFixture(1);
+        $this->setUpBackendUserMain();
         $GLOBALS['LANG'] = GeneralUtility::makeInstance(LanguageService::class);
     }
 
@@ -143,20 +135,16 @@ class CacheOptimizerFilesTest extends CacheOptimizerTestAbstract
 
     /**
      * Returns the default storage.
-     *
-     * @return ResourceStorage
      */
-    protected function getDefaultStorage()
+    protected function getDefaultStorage(): ResourceStorage
     {
         return $this->storageRepository->findByUid(self::RESOURCE_STORAGE_UID);
     }
 
     /**
      * Returns the identifier of the storage root folder.
-     *
-     * @return string
      */
-    protected function getRootFolderIdentifier()
+    protected function getRootFolderIdentifier(): string
     {
         $storage = $this->getDefaultStorage();
         $folderIdentifier = '/';
@@ -174,10 +162,8 @@ class CacheOptimizerFilesTest extends CacheOptimizerTestAbstract
     /**
      * Lets the file processor process the given array and lets the cache
      * optimizer flush the cache for all collected pages.
-     *
-     * @param array $fileValues
      */
-    protected function processFileArrayAndFlushCache($fileValues): void
+    protected function processFileArrayAndFlushCache(array $fileValues): void
     {
         $this->fileProcessor->start($fileValues);
         $this->fileProcessor->processData();

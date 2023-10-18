@@ -1,0 +1,6 @@
+tt_content,,,,,,,,,,,,,,
+,uid,pid,tstamp,crdate,cruser_id,sorting,CType,tx_gridelements_backend_layout,tx_gridelements_children,tx_gridelements_container,records,header,colPos,sectionIndex
+,2111,211,1401292012,1401292000,1,256,gridelements_pi1,2ColumnGrid,1,,,"2ColumnGrid 1",0,1
+,2211,221,1401292087,1401292031,1,256,gridelements_pi1,2ColumnGrid,1,,,"2ColumnGrid 2",0,1
+,21111,211,1401292087,1401292031,1,256,textmedia,,,2111,,Textmedia,-1,1
+,22111,221,1401292114,1401292114,1,256,shortcut,,,2211,21111,gridelement_shortcut,-1,1

@@ -1,0 +1,5 @@
+be_users,,,,,,,,,
+,uid,pid,tstamp,username,password,crdate,cruser_id,workspace_perms,lastlogin
+,2,0,1370009282,_cli_phpunit,3b39e927252519dbfc099ea16d7c1518,1370009282,1,1,1371033743
+,4,0,1381919418,_cli_scheduler,$P$CsB4D0cK.qg8iyJAbp4l7Cs7UTyZGw1,1381919418,1,1,1371033743
+,5,0,1382365029,_cli_lowlevel,$P$CsB4D0cK.qg8iyJAbp4l7Cs7UTyZGw1,1382365029,1,1,1371033743
