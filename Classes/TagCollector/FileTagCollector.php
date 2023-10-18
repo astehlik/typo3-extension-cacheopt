@@ -47,7 +47,7 @@ class FileTagCollector
 
         if ($file instanceof File) {
             $cacheTags[] = 'sys_file_' . $file->getUid();
-            $fileMetadata = $file->_getMetaData();
+            $fileMetadata = $file->getMetaData()->get();
             $cacheTags[] = 'sys_file_metadata_' . $fileMetadata['uid'];
         }
 
