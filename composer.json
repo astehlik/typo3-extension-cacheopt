@@ -1,5 +1,5 @@
 {
-	"name": "intera-typo3-extension/cacheopt",
+	"name": "de-swebhosting-typo3-extension/cacheopt",
 	"type": "typo3-cms-extension",
 	"description": "Optimizes automatic cache clearing.",
 	"license": "GPL-3.0-or-later",
