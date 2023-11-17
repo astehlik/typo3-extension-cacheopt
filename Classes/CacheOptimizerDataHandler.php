@@ -18,7 +18,6 @@ use Doctrine\DBAL\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
-use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -27,22 +26,12 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class CacheOptimizerDataHandler
 {
-    /**
-     * @var CacheOptimizerRegistry
-     */
-    protected $cacheOptimizerRegistry;
+    protected CacheOptimizerRegistry $cacheOptimizerRegistry;
 
     /**
      * The array of page UIDs for which the cache should be flushed in the current DataHandler run.
-     *
-     * @var array
      */
-    protected $currentPageIdArray;
-
-    /**
-     * @var ResourceFactory
-     */
-    protected $resourceFactory;
+    protected array $currentPageIdArray;
 
     /**
      * Is called by the data handler within the processClearCacheQueue() method and
@@ -90,7 +79,7 @@ class CacheOptimizerDataHandler
      *
      * @param bool $neverExcludeRoot if TRUE the TYPO3 root (pid = 0) will never be excluded
      */
-    protected function getPidExcludeStatement($neverExcludeRoot, QueryBuilder $queryBuilder): void
+    protected function getPidExcludeStatement(bool $neverExcludeRoot, QueryBuilder $queryBuilder): void
     {
         $flushedCachePids = $this->cacheOptimizerRegistry->getFlushedCachePageUids();
         if (count($flushedCachePids) === 0) {
@@ -172,25 +161,23 @@ class CacheOptimizerDataHandler
             return;
         }
         $this->cacheOptimizerRegistry->registerPageWithFlushedCache($pid);
-        $this->currentPageIdArray[] = (int)$pid;
+        $this->currentPageIdArray[] = $pid;
     }
 
     /**
      * Registers all pages for cache flush that contain contents related to records of the given table.
      * Internal use, should be called by flushRelatedCacheForRecord() only!
      *
-     * @param string $table
-     *
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
      */
-    protected function registerRelatedPluginPagesForCacheFlush($table): void
+    protected function registerRelatedPluginPagesForCacheFlush(string $table): void
     {
         if (!$this->cacheOptimizerRegistry->isRegisteredPluginTable($table)) {
             return;
         }
 
-        $queryBuilder = $this->getQueryBuilderForTable('tt_content');
+        $queryBuilder = $this->getQueryBuilderForTtContent();
         $queryBuilder->select('pid')
             ->from('tt_content')
             ->groupBy('pid');
@@ -200,14 +187,14 @@ class CacheOptimizerDataHandler
 
         $pageUidResult = $queryBuilder->execute();
 
-        while ($pageUid = (int)$pageUidResult->fetchColumn()) {
+        while ($pageUid = (int)$pageUidResult->fetchOne()) {
             $this->registerPageForCacheFlush($pageUid);
         }
     }
 
-    private function getQueryBuilderForTable(string $tableName): QueryBuilder
+    private function getQueryBuilderForTtContent(): QueryBuilder
     {
         $connectionPool = GeneralUtility::makeInstance(ConnectionPool::class);
-        return $connectionPool->getQueryBuilderForTable($tableName);
+        return $connectionPool->getQueryBuilderForTable('tt_content');
     }
 }
