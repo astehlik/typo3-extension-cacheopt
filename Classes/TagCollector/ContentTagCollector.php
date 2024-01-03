@@ -28,7 +28,7 @@ class ContentTagCollector implements ContentObjectPostInitHookInterface
     public function postProcessContentObjectInitialization(
         ContentObjectRenderer &$parentObject
     ): void {
-        $tsfe = $this->getTypoScriptFrontendController();
+        $tsfe = $this->getTypoScriptFrontendController($parentObject);
         if (!$tsfe instanceof TypoScriptFrontendController) {
             return;
         }
@@ -51,8 +51,8 @@ class ContentTagCollector implements ContentObjectPostInitHookInterface
         $tsfe->addCacheTags($cacheTags);
     }
 
-    protected function getTypoScriptFrontendController(): ?TypoScriptFrontendController
+    protected function getTypoScriptFrontendController(ContentObjectRenderer $cObj): ?TypoScriptFrontendController
     {
-        return $GLOBALS['TSFE'] ?? null;
+        return $cObj->getRequest()->getAttribute('frontend.controller') ?? null;
     }
 }
