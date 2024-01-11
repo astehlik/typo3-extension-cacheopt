@@ -14,6 +14,7 @@ namespace Tx\Cacheopt\TagCollector;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Resource\Event\GeneratePublicUrlForResourceEvent;
 use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Resource\FileReference;
@@ -54,6 +55,18 @@ class FileTagCollector
 
     protected function getTypoScriptFrontendController(): ?TypoScriptFrontendController
     {
-        return $GLOBALS['TSFE'] ?? null;
+        $typo3Request = $GLOBALS['TYPO3_REQUEST'];
+
+        if (!$typo3Request instanceof ServerRequest) {
+            return null;
+        }
+
+        $frontendController = $typo3Request->getAttribute('frontend.controller');
+
+        if (!$frontendController instanceof TypoScriptFrontendController) {
+            return null;
+        }
+
+        return $frontendController;
     }
 }

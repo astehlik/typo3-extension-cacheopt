@@ -53,10 +53,12 @@ class ContentTagCollector implements ContentObjectPostInitHookInterface
 
     protected function getTypoScriptFrontendController(ContentObjectRenderer $cObj): ?TypoScriptFrontendController
     {
-        if ($cObj->getRequest()->getAttribute('frontend.controller') instanceof TypoScriptFrontendController) {
-            return $cObj->getRequest()->getAttribute('frontend.controller');
+        $frontendController = $cObj->getRequest()->getAttribute('frontend.controller');
+
+        if (!$frontendController instanceof TypoScriptFrontendController) {
+            return null;
         }
 
-        return null;
+        return $frontendController;
     }
 }
