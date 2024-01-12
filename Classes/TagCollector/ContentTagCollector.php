@@ -14,6 +14,7 @@ namespace Tx\Cacheopt\TagCollector;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectPostInitHookInterface;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
@@ -28,7 +29,7 @@ class ContentTagCollector implements ContentObjectPostInitHookInterface
     public function postProcessContentObjectInitialization(
         ContentObjectRenderer &$parentObject
     ): void {
-        $tsfe = $this->getTypoScriptFrontendController($parentObject);
+        $tsfe = $this->getTypoScriptFrontendController();
         if (!$tsfe instanceof TypoScriptFrontendController) {
             return;
         }
@@ -51,9 +52,15 @@ class ContentTagCollector implements ContentObjectPostInitHookInterface
         $tsfe->addCacheTags($cacheTags);
     }
 
-    protected function getTypoScriptFrontendController(ContentObjectRenderer $cObj): ?TypoScriptFrontendController
+    protected function getTypoScriptFrontendController(): ?TypoScriptFrontendController
     {
-        $frontendController = $cObj->getRequest()->getAttribute('frontend.controller');
+        $typo3Request = $GLOBALS['TYPO3_REQUEST'];
+
+        if (!$typo3Request instanceof ServerRequest) {
+            return null;
+        }
+
+        $frontendController = $typo3Request->getAttribute('frontend.controller');
 
         if (!$frontendController instanceof TypoScriptFrontendController) {
             return null;
