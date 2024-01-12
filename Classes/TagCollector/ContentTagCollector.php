@@ -18,7 +18,7 @@ use TYPO3\CMS\Frontend\ContentObject\ContentObjectPostInitHookInterface;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
-class ContentTagCollector implements ContentObjectPostInitHookInterface
+class ContentTagCollector extends AbstractTagCollector implements ContentObjectPostInitHookInterface
 {
     /**
      * Hook for post processing the initialization of ContentObjectRenderer.
@@ -28,7 +28,7 @@ class ContentTagCollector implements ContentObjectPostInitHookInterface
     public function postProcessContentObjectInitialization(
         ContentObjectRenderer &$parentObject
     ): void {
-        $tsfe = $this->getTypoScriptFrontendController($parentObject);
+        $tsfe = $this->getTypoScriptFrontendController();
         if (!$tsfe instanceof TypoScriptFrontendController) {
             return;
         }
@@ -49,16 +49,5 @@ class ContentTagCollector implements ContentObjectPostInitHookInterface
         }
 
         $tsfe->addCacheTags($cacheTags);
-    }
-
-    protected function getTypoScriptFrontendController(ContentObjectRenderer $cObj): ?TypoScriptFrontendController
-    {
-        $frontendController = $cObj->getRequest()->getAttribute('frontend.controller');
-
-        if (!$frontendController instanceof TypoScriptFrontendController) {
-            return null;
-        }
-
-        return $frontendController;
     }
 }

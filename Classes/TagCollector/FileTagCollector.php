@@ -14,14 +14,13 @@ namespace Tx\Cacheopt\TagCollector;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Resource\Event\GeneratePublicUrlForResourceEvent;
 use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Resource\FileReference;
 use TYPO3\CMS\Core\Resource\ProcessedFile;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
-class FileTagCollector
+class FileTagCollector extends AbstractTagCollector
 {
     public function collectTagsForPreGeneratePublicUrl(GeneratePublicUrlForResourceEvent $event): void
     {
@@ -51,22 +50,5 @@ class FileTagCollector
         }
 
         $tsfe->addCacheTags($cacheTags);
-    }
-
-    protected function getTypoScriptFrontendController(): ?TypoScriptFrontendController
-    {
-        $typo3Request = $GLOBALS['TYPO3_REQUEST'];
-
-        if (!$typo3Request instanceof ServerRequest) {
-            return null;
-        }
-
-        $frontendController = $typo3Request->getAttribute('frontend.controller');
-
-        if (!$frontendController instanceof TypoScriptFrontendController) {
-            return null;
-        }
-
-        return $frontendController;
     }
 }
