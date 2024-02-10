@@ -167,6 +167,7 @@ class CacheOptimizerFilesTest extends CacheOptimizerTestAbstract
     protected function processFileArrayAndFlushCache(array $fileValues): void
     {
         $this->fileProcessor->start($fileValues);
+        // @extensionScannerIgnoreLine False positive.
         $this->fileProcessor->processData();
     }
 }
