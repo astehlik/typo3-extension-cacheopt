@@ -17,6 +17,7 @@ namespace Tx\Cacheopt\Tests\Functional\Support;
  * The TYPO3 project - inspiring people to share!
  */
 
+use Psr\EventDispatcher\EventDispatcherInterface;
 use TYPO3\CMS\Core\Configuration\SiteConfiguration;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -53,7 +54,8 @@ trait SiteBasedTestTrait
             $configuration['errorHandling'] = $errorHandling;
         }
         $siteConfiguration = new SiteConfiguration(
-            $this->instancePath . '/typo3conf/sites/'
+            $this->instancePath . '/typo3conf/sites/',
+            GeneralUtility::makeInstance(EventDispatcherInterface::class)
         );
 
         // Ensure no previous site configuration influences the test
