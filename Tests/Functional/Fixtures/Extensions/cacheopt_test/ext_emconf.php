@@ -1,4 +1,5 @@
 <?php
+
 /** @noinspection PhpMissingStrictTypesDeclarationInspection */
 
 /** @var string $_EXTKEY */
@@ -16,7 +17,7 @@ $EM_CONF[$_EXTKEY] = [
     'author_company' => 'Intera GmbH',
     'version' => '1.0.0',
     'constraints' => [
-        'depends' => ['typo3' => '9.5.0-9.5.99'],
+        'depends' => ['typo3' => '11.5.0-11.5.99'],
         'conflicts' => [],
         'suggests' => [],
     ],

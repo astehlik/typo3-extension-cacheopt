@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tx\Cacheopt\TagCollector;
@@ -13,35 +14,22 @@ namespace Tx\Cacheopt\TagCollector;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
+use TYPO3\CMS\Core\Resource\Event\GeneratePublicUrlForResourceEvent;
 use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Resource\FileReference;
 use TYPO3\CMS\Core\Resource\ProcessedFile;
-use TYPO3\CMS\Core\Resource\ResourceInterface;
-use TYPO3\CMS\Core\Resource\ResourceStorage;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
-class FileTagCollector
+class FileTagCollector extends AbstractTagCollector
 {
-    /**
-     * @param ResourceStorage $storage
-     * @param DriverInterface $driver
-     * @param ResourceInterface $resourceObject
-     * @param $relativeToCurrentScript
-     * @param array $urlData
-     */
-    public function collectTagsForPreGeneratePublicUrl(
-        /** @noinspection PhpUnusedParameterInspection */
-        ResourceStorage $storage,
-        DriverInterface $driver,
-        ResourceInterface $resourceObject,
-        $relativeToCurrentScript,
-        array $urlData
-    ) {
+    public function collectTagsForPreGeneratePublicUrl(GeneratePublicUrlForResourceEvent $event): void
+    {
         $tsfe = $this->getTypoScriptFrontendController();
         if (!$tsfe instanceof TypoScriptFrontendController) {
             return;
         }
+
+        $resourceObject = $event->getResource();
 
         $cacheTags = [];
         $file = null;
@@ -57,18 +45,10 @@ class FileTagCollector
 
         if ($file instanceof File) {
             $cacheTags[] = 'sys_file_' . $file->getUid();
-            $fileMetadata = $file->_getMetaData();
+            $fileMetadata = $file->getMetaData()->get();
             $cacheTags[] = 'sys_file_metadata_' . $fileMetadata['uid'];
         }
 
         $tsfe->addCacheTags($cacheTags);
-    }
-
-    /**
-     * @return TypoScriptFrontendController
-     */
-    protected function getTypoScriptFrontendController()
-    {
-        return $GLOBALS['TSFE'];
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tx\Cacheopt\Tests\Functional;
@@ -18,15 +19,14 @@ namespace Tx\Cacheopt\Tests\Functional;
  */
 class CacheOptimizerDataHandlerGridelementsTest extends CacheOptimizerTestAbstract
 {
-    const CONTENT_UID_REFERENCED = 21111;
+    public const CONTENT_UID_REFERENCED = 21111;
 
-    const PAGE_UID_REFERENCING_CONTENT = 221;
+    public const PAGE_UID_REFERENCING_CONTENT = 221;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         // TODO: re-enable when gridelements is available for version 10
         return;
-
         $this->testExtensionsToLoad[] = 'typo3conf/ext/gridelements';
 
         parent::setUp();
@@ -45,15 +45,12 @@ class CacheOptimizerDataHandlerGridelementsTest extends CacheOptimizerTestAbstra
     /**
      * If a content element changes the cache is cleared for all pages that contain
      * record content elements that point to the changed content.
-     *
-     * @test
      */
-    public function contentChangeClearsCacheForRelatedRecordContentsWithinGridelements()
+    public function testContentChangeClearsCacheForRelatedRecordContentsWithinGridelements(): void
     {
         // TODO: re-enable when gridelements is available for version 10
-        $this->markTestSkipped('gridelements it not yet available for verison 10');
+        self::markTestSkipped('gridelements it not yet available for verison 10');
         return;
-
         $this->fillPageCache(self::PAGE_UID_REFERENCING_CONTENT);
         $this->getActionService()->modifyRecord(
             'tt_content',

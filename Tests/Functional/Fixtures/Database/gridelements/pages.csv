@@ -1,0 +1,54 @@
+pages,,,,,,,,,
+,uid,pid,crdate,tstamp,cruser_id,title,sorting,doktype,TSconfig
+,200,128,1401290268,1401290272,1,gridelement_test_root,256,1,"
+			tx_gridelements.setup.2ColumnGrid {
+			title = 2 column grid
+			description = A grid element with two columns with identical width.
+			topLevelLayout = 1
+			config {
+			colCount = 2
+			rowCount = 1
+			rows {
+			1 {
+			columns {
+			1 {
+			name = Left
+			colPos = 0
+			}
+			2 {
+			name = Right
+			colPos = 1
+			}
+			}
+			}
+			}
+			}
+			}
+
+
+			mod.web_layout.BackendLayouts {
+
+			Content {
+			title = Content
+			config.backend_layout {
+			colCount = 1
+			rowCount = 1
+			rows {
+			1 {
+			columns {
+			1 {
+			name = Standard
+			rowspan = 1
+			colPos = 0
+			}
+			}
+			}
+			}
+			}
+			}
+			}
+		"
+,210,200,1401291877,1401291979,1,gridelement_tree_1,256,1,
+,220,200,1401291975,1401291975,1,gridelement_tree_2,512,1,
+,211,210,1401291975,1401291975,1,gridelement_tree_1_subpage,256,1,
+,221,220,1401291975,1401291975,1,gridelement_tree_2_subpage,256,1,

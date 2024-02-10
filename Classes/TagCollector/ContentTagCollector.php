@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tx\Cacheopt\TagCollector;
@@ -17,16 +18,16 @@ use TYPO3\CMS\Frontend\ContentObject\ContentObjectPostInitHookInterface;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
-class ContentTagCollector implements ContentObjectPostInitHookInterface
+class ContentTagCollector extends AbstractTagCollector implements ContentObjectPostInitHookInterface
 {
     /**
-     * Hook for post processing the initialization of ContentObjectRenderer
+     * Hook for post processing the initialization of ContentObjectRenderer.
      *
      * @param ContentObjectRenderer $parentObject Parent content object
      */
     public function postProcessContentObjectInitialization(
         ContentObjectRenderer &$parentObject
-    ) {
+    ): void {
         $tsfe = $this->getTypoScriptFrontendController();
         if (!$tsfe instanceof TypoScriptFrontendController) {
             return;
@@ -36,7 +37,7 @@ class ContentTagCollector implements ContentObjectPostInitHookInterface
         $contentData = $parentObject->data;
 
         $table = $parentObject->getCurrentTable();
-        $uid = (int)$contentData['uid'];
+        $uid = (int)($contentData['uid'] ?? 0);
         if ($table === '' || $uid === 0) {
             return;
         }
@@ -48,13 +49,5 @@ class ContentTagCollector implements ContentObjectPostInitHookInterface
         }
 
         $tsfe->addCacheTags($cacheTags);
-    }
-
-    /**
-     * @return TypoScriptFrontendController
-     */
-    protected function getTypoScriptFrontendController()
-    {
-        return $GLOBALS['TSFE'];
     }
 }

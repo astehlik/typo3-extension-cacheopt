@@ -1,0 +1,12 @@
+tt_content,,,,,,,,,,,,,,,
+,uid,pid,tstamp,crdate,cruser_id,sorting,CType,header,media,records,colPos,pages,list_type,sectionIndex,file_collections
+,89,130,1401292012,1401292000,1,256,uploads,file,1,,0,,,1,
+,90,131,1401292087,1401292031,1,256,uploads,referencing_directory,0,,0,,,1,1
+,900,1310,1401292087,1401292031,1,256,shortcut,referencing_content_referencing_directory,0,90,0,,,1,
+,91,133,1401292114,1401292114,1,256,menu_pages,menu,0,,0,"132,139",,1,
+,92,134,1401390433,1401390410,1,256,list,cacheopt_record_renderer_test_plugin,0,,0,,cacheopttest_recordrenderplugin,1,
+,93,136,1401390490,1401390439,1,256,cacheopttest_recordrendercontent,cacheopt_record_renderer_test_content,0,,0,,,1,
+,94,129,1401434654,1401434654,1,256,text,simple_content,0,,0,,,1,
+,95,129,1401434663,1401434663,1,512,text,referenced_content,0,,0,,,1,
+,96,137,1401434710,1401434710,1,256,shortcut,referencing_content,0,95,0,,,1,
+,97,139,1401292114,1401292114,1,256,menu_pages,menu,0,,0,132,,1,

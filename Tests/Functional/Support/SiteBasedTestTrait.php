@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tx\Cacheopt\Tests\Functional\Support;
@@ -28,11 +29,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 trait SiteBasedTestTrait
 {
-    /**
-     * @param int $rootPageId
-     * @param string $base
-     * @return array
-     */
     protected function buildSiteConfiguration(
         int $rootPageId,
         string $base = ''
@@ -43,18 +39,12 @@ trait SiteBasedTestTrait
         ];
     }
 
-    /**
-     * @param string $identifier
-     * @param array $site
-     * @param array $languages
-     * @param array $errorHandling
-     */
     protected function writeSiteConfiguration(
         string $identifier,
         array $site = [],
         array $languages = [],
         array $errorHandling = []
-    ) {
+    ): void {
         $configuration = $site;
         if (!empty($languages)) {
             $configuration['languages'] = $languages;
