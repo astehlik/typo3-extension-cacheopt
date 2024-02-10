@@ -92,7 +92,7 @@ class CacheOptimizerDataHandler
         );
 
         if ($neverExcludeRoot) {
-            $pidQuery = $queryBuilder->expr()->orX(
+            $pidQuery = $queryBuilder->expr()->or(
                 $pidQuery,
                 $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT))
             );
@@ -120,7 +120,7 @@ class CacheOptimizerDataHandler
 
         $pluginTypesForTable = $this->cacheOptimizerRegistry->getPluginTypesForTable($table);
         if ($pluginTypesForTable !== []) {
-            $orStatements[] = $queryBuilder->expr()->andX(
+            $orStatements[] = $queryBuilder->expr()->and(
                 $queryBuilder->expr()->eq('tt_content.CType', $queryBuilder->createNamedParameter('list')),
                 $queryBuilder->expr()->in(
                     'tt_content.list_type',
@@ -138,7 +138,7 @@ class CacheOptimizerDataHandler
             return;
         }
 
-        $queryBuilder->andWhere($queryBuilder->expr()->orX(...$orStatements));
+        $queryBuilder->andWhere($queryBuilder->expr()->or(...$orStatements));
     }
 
     /**
@@ -185,7 +185,7 @@ class CacheOptimizerDataHandler
         $this->getPidExcludeStatement(false, $queryBuilder);
         $this->getTtContentWhereStatementForTable($table, $queryBuilder);
 
-        $pageUidResult = $queryBuilder->execute();
+        $pageUidResult = $queryBuilder->executeQuery();
 
         while ($pageUid = (int)$pageUidResult->fetchOne()) {
             $this->registerPageForCacheFlush($pageUid);

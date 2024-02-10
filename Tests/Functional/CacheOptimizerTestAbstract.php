@@ -127,7 +127,7 @@ abstract class CacheOptimizerTestAbstract extends FunctionalTestCase
         $builder = $this->getQueryBuilderForSelect('cache_pages_tags');
         $entryCount = (int)$builder->count('id')
             ->where($builder->expr()->eq('tag', $builder->createNamedParameter($cacheTag)))
-            ->execute()
+            ->executeQuery()
             ->fetchOne();
 
         self::assertGreaterThanOrEqual(1, $entryCount, 'Page cache for page ' . $pageUid . ' is not filled.');
@@ -199,7 +199,7 @@ abstract class CacheOptimizerTestAbstract extends FunctionalTestCase
             )
             ->andWhere($builder->expr()->eq('tag', $builder->createNamedParameter($cacheTag)));
 
-        return $builder->execute()->fetchAssociative() ?: [];
+        return $builder->executeQuery()->fetchAssociative() ?: [];
     }
 
     /**

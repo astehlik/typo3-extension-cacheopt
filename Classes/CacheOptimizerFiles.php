@@ -227,7 +227,7 @@ class CacheOptimizerFiles
             ->andWhere('storage', $queryBuilder->createNamedParameter($storageUid, \PDO::PARAM_INT))
             ->andWhere('folder', $queryBuilder->createNamedParameter($folderIdentifier));
 
-        $fileCollectionResult = $queryBuilder->execute();
+        $fileCollectionResult = $queryBuilder->executeQuery();
         while ($fileCollectionUid = (int)$fileCollectionResult->fetchOne()) {
             $this->registerRecordForCacheFlushing('sys_file_collection', $fileCollectionUid);
         }
