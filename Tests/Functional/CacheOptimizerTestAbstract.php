@@ -18,7 +18,7 @@ use Tx\Cacheopt\Tests\Functional\Mocks\ResourceStorageMock;
 use Tx\Cacheopt\Tests\Functional\Support\SiteBasedTestTrait;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
-use TYPO3\CMS\Core\Localization\LanguageService;
+use TYPO3\CMS\Core\Localization\LanguageServiceFactory;
 use TYPO3\CMS\Core\Resource\ResourceStorage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\TestingFramework\Core\Functional\Framework\DataHandling\ActionService;
@@ -177,7 +177,7 @@ abstract class CacheOptimizerTestAbstract extends FunctionalTestCase
     protected function getActionService(): ActionService
     {
         $this->setUpBackendUserMain();
-        $GLOBALS['LANG'] = GeneralUtility::makeInstance(LanguageService::class);
+        $GLOBALS['LANG'] = GeneralUtility::makeInstance(LanguageServiceFactory::class)->createFromUserPreferences($GLOBALS['BE_USER']);
         return GeneralUtility::makeInstance(ActionService::class);
     }
 
