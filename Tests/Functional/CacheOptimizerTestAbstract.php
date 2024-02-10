@@ -38,10 +38,8 @@ abstract class CacheOptimizerTestAbstract extends FunctionalTestCase
 
     /**
      * We want the folders containing the test files to be created.
-     *
-     * @var array
      */
-    protected $additionalFoldersToCreate = [
+    protected array $additionalFoldersToCreate = [
         '/fileadmin/testdirectory',
         '/fileadmin/testdirectory_referenced',
         '/typo3temp/uploadfiles',
@@ -66,15 +64,10 @@ abstract class CacheOptimizerTestAbstract extends FunctionalTestCase
      * We need to remove the additional configuration of our base class,
      * otherwise the content renderer will not work properly and the cache
      * will not be filled.
-     *
-     * @var array
      */
-    protected $pathsToLinkInTestInstance = [];
+    protected array $pathsToLinkInTestInstance = [];
 
-    /**
-     * @var array
-     */
-    protected $testExtensionsToLoad = [
+    protected array $testExtensionsToLoad = [
         'typo3conf/ext/cacheopt/Tests/Functional/Fixtures/Extensions/cacheopt_test',
         'typo3conf/ext/cacheopt',
     ];
