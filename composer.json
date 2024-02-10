@@ -51,7 +51,6 @@
 			"always-add-alias-loader": true
 		},
 		"typo3/cms": {
-			"app-dir": ".Build",
 			"extension-key": "cacheopt",
 			"web-dir": ".Build/Web"
 		}
