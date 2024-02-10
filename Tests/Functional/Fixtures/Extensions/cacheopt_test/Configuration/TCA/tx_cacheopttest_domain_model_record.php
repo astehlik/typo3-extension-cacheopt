@@ -11,13 +11,12 @@ return [
         'delete' => 'deleted',
         'searchFields' => 'title',
     ],
-    'interface' => ['always_description' => 0],
     'columns' => [
         'title' => [
             'label' => 'Title',
             'config' => [
                 'type' => 'input',
-                'eval' => 'required',
+                'required' => true,
                 'size' => '50',
                 'max' => '256',
             ],
