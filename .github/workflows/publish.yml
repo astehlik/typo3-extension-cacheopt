@@ -1,8 +1,12 @@
+---
 name: publish
+
 on:
+  workflow_dispatch:
   push:
     tags:
       - '*'
+
 jobs:
   publish:
     name: Publish new version to TER
