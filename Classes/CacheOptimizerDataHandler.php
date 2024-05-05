@@ -14,7 +14,7 @@ namespace Tx\Cacheopt;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\ArrayParameterType;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
@@ -88,7 +88,7 @@ class CacheOptimizerDataHandler
 
         $pidQuery = $queryBuilder->expr()->notIn(
             'pid',
-            $queryBuilder->createNamedParameter($flushedCachePids, Connection::PARAM_INT_ARRAY)
+            $queryBuilder->createNamedParameter($flushedCachePids, ArrayParameterType::INTEGER)
         );
 
         if ($neverExcludeRoot) {
@@ -114,7 +114,7 @@ class CacheOptimizerDataHandler
         if ($contentTypesForTable !== []) {
             $orStatements[] = $queryBuilder->expr()->in(
                 'tt_content.CType',
-                $queryBuilder->createNamedParameter($contentTypesForTable, Connection::PARAM_STR_ARRAY)
+                $queryBuilder->createNamedParameter($contentTypesForTable, ArrayParameterType::STRING)
             );
         }
 
@@ -124,7 +124,7 @@ class CacheOptimizerDataHandler
                 $queryBuilder->expr()->eq('tt_content.CType', $queryBuilder->createNamedParameter('list')),
                 $queryBuilder->expr()->in(
                     'tt_content.list_type',
-                    $queryBuilder->createNamedParameter($pluginTypesForTable, Connection::PARAM_STR_ARRAY)
+                    $queryBuilder->createNamedParameter($pluginTypesForTable, ArrayParameterType::STRING)
                 )
             );
         }

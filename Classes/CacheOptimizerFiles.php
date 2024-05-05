@@ -207,6 +207,23 @@ class CacheOptimizerFiles
         }
     }
 
+    protected function flushCacheForFolderFileCollection(int $fileCollectionUid): void
+    {
+        $this->registerRecordForCacheFlushing('sys_file_collection', $fileCollectionUid);
+
+        // Find content elements using this collection
+        $queryBuilder = $this->getQueryBuilderForTable('tt_content');
+        $queryBuilder->select('uid')
+            ->from('tt_content')
+            ->where($queryBuilder->expr()->eq('deleted', 0))
+            ->andWhere($queryBuilder->expr()->inSet('file_collections', (string)$fileCollectionUid));
+
+        $result = $queryBuilder->executeQuery();
+        while ($contentElementUid = (int)$result->fetchOne()) {
+            $this->registerRecordForCacheFlushing('tt_content', $contentElementUid);
+        }
+    }
+
     /**
      * Searches for all records pointing to the given folder and flushes
      * the related page caches.
@@ -219,17 +236,24 @@ class CacheOptimizerFiles
 
         $this->cacheOptimizerRegistry->registerProcessedFolder($storageUid, $folderIdentifier);
 
+        $combinedFolderIdentifier = $storageUid . ':' . $folderIdentifier;
+
         $queryBuilder = $this->getQueryBuilderForTable('sys_file_collection');
         $queryBuilder->select('uid')
             ->from('sys_file_collection')
             ->where($queryBuilder->expr()->eq('deleted', 0))
-            ->andWhere('type', 'folder')
-            ->andWhere('storage', $queryBuilder->createNamedParameter($storageUid, \PDO::PARAM_INT))
-            ->andWhere('folder', $queryBuilder->createNamedParameter($folderIdentifier));
+            ->andWhere($queryBuilder->expr()->eq('type', $queryBuilder->expr()->literal('folder')))
+            ->andWhere(
+                $queryBuilder->expr()->eq(
+                    'folder_identifier',
+                    $queryBuilder->createNamedParameter($combinedFolderIdentifier)
+                )
+            );
 
         $fileCollectionResult = $queryBuilder->executeQuery();
+
         while ($fileCollectionUid = (int)$fileCollectionResult->fetchOne()) {
-            $this->registerRecordForCacheFlushing('sys_file_collection', $fileCollectionUid);
+            $this->flushCacheForFolderFileCollection($fileCollectionUid);
         }
     }
 
@@ -254,7 +278,6 @@ class CacheOptimizerFiles
         $this->flushCacheTags[] = $table . '_' . $uid;
     }
 
-    /** @noinspection PhpSameParameterValueInspection */
     private function getQueryBuilderForTable(string $tableName): QueryBuilder
     {
         $connectionPool = GeneralUtility::makeInstance(ConnectionPool::class);

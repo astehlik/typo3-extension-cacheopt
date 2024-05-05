@@ -68,17 +68,8 @@ class CacheOptimizerFilesTest extends CacheOptimizerTestAbstract
         $this->fillPageCache(self::PAGE_UID_REFERENCED_DIRECTORY);
         $this->fillPageCache(self::PAGE_UID_REFERENCING_CONTENT_REFERENCING_DIRECTORY);
 
-        $fileValues = [
-            'editfile' => [
-                [
-                    'data' => 'testcontent_modified_directory',
-                    'target' => $this->getRootFolderIdentifier()
-                        . ltrim(self::FILE_IDENTIFIER_REFERENCED_IN_DIRECTORY, '/'),
-                ],
-            ],
-        ];
+        $this->uploadFile(dirname(self::FILE_IDENTIFIER_REFERENCED_IN_DIRECTORY) . '/new_uploaded_file.txt');
 
-        $this->processFileArrayAndFlushCache($fileValues);
         $this->assertPageCacheIsEmpty(self::PAGE_UID_REFERENCED_DIRECTORY);
         $this->assertPageCacheIsEmpty(self::PAGE_UID_REFERENCING_CONTENT_REFERENCING_DIRECTORY);
     }
@@ -112,25 +103,8 @@ class CacheOptimizerFilesTest extends CacheOptimizerTestAbstract
     {
         $this->fillPageCache(self::PAGE_UID_REFERENCED_FILE);
 
-        $uploadPosition = 'file1';
-        $_FILES['upload_' . $uploadPosition] = [
-            'name' => basename(self::FILE_IDENTIFIER_REFERENCED),
-            'type' => 'text/plain',
-            'tmp_name' => $this->instancePath . '/typo3temp/uploadfiles/testfile_referenced.txt',
-            'size' => 31,
-        ];
+        $this->uploadFile(self::FILE_IDENTIFIER_REFERENCED);
 
-        $fileValues = [
-            'upload' => [
-                [
-                    'data' => $uploadPosition,
-                    'target' => $this->getRootFolderIdentifier()
-                        . ltrim(dirname(self::FILE_IDENTIFIER_REFERENCED), '/'),
-                ],
-            ],
-        ];
-
-        $this->processFileArrayAndFlushCache($fileValues);
         $this->assertPageCacheIsEmpty(self::PAGE_UID_REFERENCED_FILE);
     }
 
@@ -169,5 +143,29 @@ class CacheOptimizerFilesTest extends CacheOptimizerTestAbstract
         $this->fileProcessor->start($fileValues);
         // @extensionScannerIgnoreLine False positive.
         $this->fileProcessor->processData();
+    }
+
+    protected function uploadFile(string $filePath): void
+    {
+        $uploadPosition = 'file1';
+
+        $_FILES['upload_' . $uploadPosition] = [
+            'name' => basename($filePath),
+            'type' => 'text/plain',
+            'tmp_name' => $this->instancePath . '/typo3temp/uploadfiles/testfile_referenced.txt',
+            'size' => 31,
+        ];
+
+        $fileValues = [
+            'upload' => [
+                [
+                    'data' => $uploadPosition,
+                    'target' => $this->getRootFolderIdentifier()
+                        . ltrim(dirname($filePath), '/'),
+                ],
+            ],
+        ];
+
+        $this->processFileArrayAndFlushCache($fileValues);
     }
 }
