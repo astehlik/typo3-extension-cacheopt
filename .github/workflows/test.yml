@@ -1,12 +1,19 @@
 ---
+name: test
+
 on:
   push:
+    branches:
+      - main
+      - develop
   pull_request:
   workflow_dispatch:
+  schedule:
+    - cron: '30 8 * * 6'
 
 env:
   TYPO3_EXTENSION_KEY: cacheopt
-  MAIN_PHP_VERSION: 8.2
+  MAIN_PHP_VERSION: 8.3
 
 jobs:
   "composer-validate":
@@ -60,7 +67,7 @@ jobs:
     name: "PHP Unit tests"
     strategy:
       matrix:
-        php_version: ["7.4", "8.2"]
+        php_version: ["8.1", "8.3"]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -96,7 +103,7 @@ jobs:
     name: "PHP linting"
     strategy:
       matrix:
-        php_version: ["7.4", "8.0", "8.1", "8.2"]
+        php_version: ["8.1", "8.3"]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -116,7 +123,7 @@ jobs:
         with:
           php_version: ${{ env.MAIN_PHP_VERSION }}
       - run: |
-          bash .Build/bin/t3_run_tests.sh -s unit -p ${{ env.MAIN_PHP_VERSION }} -x -z coverage -e "--coverage-clover Logs/clover-unit.xml --whitelist ../Classes"
+          bash .Build/bin/t3_run_tests.sh -s unit -p ${{ env.MAIN_PHP_VERSION }} -x -z coverage -e "--coverage-clover Logs/clover-unit.xml --coverage-filter ../Classes"
       - uses: actions/upload-artifact@v3
         with:
           name: coverage-phpunit
@@ -133,7 +140,7 @@ jobs:
         with:
           php_version: ${{ env.MAIN_PHP_VERSION }}
       - run: |
-          bash .Build/bin/t3_run_tests.sh -s functional -d mysql -j 5.7 -p ${{ env.MAIN_PHP_VERSION }} -x -z coverage -e "--coverage-clover Logs/clover-functional.xml --whitelist ../Classes"
+          bash .Build/bin/t3_run_tests.sh -s functional -d mysql -p ${{ env.MAIN_PHP_VERSION }} -x -z coverage -e "--coverage-clover Logs/clover-functional.xml --coverage-filter ../Classes"
       - uses: actions/upload-artifact@v3
         with:
           name: coverage-functional
@@ -180,4 +187,4 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: "${{ env.MAIN_PHP_VERSION }}"
-      - run: php .Build/bin/typo3scan scan --target 11 .
+      - run: php .Build/bin/typo3scan scan --target 12 .

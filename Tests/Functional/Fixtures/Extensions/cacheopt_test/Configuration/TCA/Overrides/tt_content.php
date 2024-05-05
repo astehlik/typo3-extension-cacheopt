@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 
-if (!defined('TYPO3_MODE')) {
-    exit('Access denied.');
-}
+defined('TYPO3') || exit;
 
 ExtensionUtility::registerPlugin(
     'CacheoptTest',

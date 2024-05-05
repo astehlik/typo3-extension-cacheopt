@@ -16,6 +16,8 @@ namespace Tx\CacheoptTest\Controller;
 
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
+use TYPO3\CMS\Fluid\View\StandaloneView;
+use TYPO3Fluid\Fluid\View\ViewInterface;
 
 /**
  * Dummy controller for rendering records.
@@ -33,8 +35,8 @@ class RecordController extends ActionController
     /**
      * We do not need a view since we only render a dummy string.
      */
-    protected function resolveView()
+    protected function resolveView(): ViewInterface
     {
-        return null;
+        return new StandaloneView();
     }
 }

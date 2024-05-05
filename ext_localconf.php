@@ -4,9 +4,7 @@
 
 /** @noinspection PhpMissingStrictTypesDeclarationInspection */
 
-if (!defined('TYPO3_MODE')) {
-    die('Access denied.');
-}
+defined('TYPO3') or die();
 
 // Hook into the data handler to clear the cache for related records.
 // Make sure we are the first processor so that other processors handle the pages we added.
