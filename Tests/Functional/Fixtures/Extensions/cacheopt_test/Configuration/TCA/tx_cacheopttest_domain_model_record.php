@@ -7,18 +7,16 @@ return [
         'label' => 'title',
         'tstamp' => 'tstamp',
         'crdate' => 'crdate',
-        'cruser_id' => 'cruser_id',
         'title' => 'Cacheopt record',
         'delete' => 'deleted',
         'searchFields' => 'title',
     ],
-    'interface' => ['always_description' => 0],
     'columns' => [
         'title' => [
             'label' => 'Title',
             'config' => [
                 'type' => 'input',
-                'eval' => 'required',
+                'required' => true,
                 'size' => '50',
                 'max' => '256',
             ],

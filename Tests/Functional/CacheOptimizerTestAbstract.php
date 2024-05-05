@@ -18,7 +18,7 @@ use Tx\Cacheopt\Tests\Functional\Mocks\ResourceStorageMock;
 use Tx\Cacheopt\Tests\Functional\Support\SiteBasedTestTrait;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
-use TYPO3\CMS\Core\Localization\LanguageService;
+use TYPO3\CMS\Core\Localization\LanguageServiceFactory;
 use TYPO3\CMS\Core\Resource\ResourceStorage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\TestingFramework\Core\Functional\Framework\DataHandling\ActionService;
@@ -38,10 +38,8 @@ abstract class CacheOptimizerTestAbstract extends FunctionalTestCase
 
     /**
      * We want the folders containing the test files to be created.
-     *
-     * @var array
      */
-    protected $additionalFoldersToCreate = [
+    protected array $additionalFoldersToCreate = [
         '/fileadmin/testdirectory',
         '/fileadmin/testdirectory_referenced',
         '/typo3temp/uploadfiles',
@@ -66,15 +64,10 @@ abstract class CacheOptimizerTestAbstract extends FunctionalTestCase
      * We need to remove the additional configuration of our base class,
      * otherwise the content renderer will not work properly and the cache
      * will not be filled.
-     *
-     * @var array
      */
-    protected $pathsToLinkInTestInstance = [];
+    protected array $pathsToLinkInTestInstance = [];
 
-    /**
-     * @var array
-     */
-    protected $testExtensionsToLoad = [
+    protected array $testExtensionsToLoad = [
         'typo3conf/ext/cacheopt/Tests/Functional/Fixtures/Extensions/cacheopt_test',
         'typo3conf/ext/cacheopt',
     ];
@@ -127,7 +120,7 @@ abstract class CacheOptimizerTestAbstract extends FunctionalTestCase
         $builder = $this->getQueryBuilderForSelect('cache_pages_tags');
         $entryCount = (int)$builder->count('id')
             ->where($builder->expr()->eq('tag', $builder->createNamedParameter($cacheTag)))
-            ->execute()
+            ->executeQuery()
             ->fetchOne();
 
         self::assertGreaterThanOrEqual(1, $entryCount, 'Page cache for page ' . $pageUid . ' is not filled.');
@@ -177,7 +170,7 @@ abstract class CacheOptimizerTestAbstract extends FunctionalTestCase
     protected function getActionService(): ActionService
     {
         $this->setUpBackendUserMain();
-        $GLOBALS['LANG'] = GeneralUtility::makeInstance(LanguageService::class);
+        $GLOBALS['LANG'] = GeneralUtility::makeInstance(LanguageServiceFactory::class)->createFromUserPreferences($GLOBALS['BE_USER']);
         return GeneralUtility::makeInstance(ActionService::class);
     }
 
@@ -199,7 +192,7 @@ abstract class CacheOptimizerTestAbstract extends FunctionalTestCase
             )
             ->andWhere($builder->expr()->eq('tag', $builder->createNamedParameter($cacheTag)));
 
-        return $builder->execute()->fetchAssociative() ?: [];
+        return $builder->executeQuery()->fetchAssociative() ?: [];
     }
 
     /**

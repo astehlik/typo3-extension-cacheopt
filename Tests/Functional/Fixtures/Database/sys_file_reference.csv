@@ -1,3 +1,3 @@
 sys_file_reference,,,,,,,,,,,,
-,uid,pid,tstamp,crdate,cruser_id,uid_local,uid_foreign,tablenames,fieldname,sorting_foreign,table_local,l10n_diffsource
-,1,130,1401292012,1401292012,1,25,89,tt_content,media,1,sys_file,
+,uid,pid,tstamp,crdate,uid_local,uid_foreign,tablenames,fieldname,sorting_foreign,l10n_diffsource
+,1,130,1401292012,1401292012,25,89,tt_content,media,1,
