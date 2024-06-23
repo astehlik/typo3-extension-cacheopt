@@ -16,6 +16,7 @@ namespace Tx\Cacheopt\Tests\Functional;
 
 use Tx\Cacheopt\Tests\Functional\Mocks\ResourceStorageMock;
 use Tx\Cacheopt\Tests\Functional\Support\SiteBasedTestTrait;
+use TYPO3\CMS\Core\Cache\Backend\Typo3DatabaseBackend;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Localization\LanguageServiceFactory;
@@ -232,7 +233,7 @@ abstract class CacheOptimizerTestAbstract extends FunctionalTestCase
                 'caching' => [
                     'cacheConfigurations' => [
                         'pages' => [
-                            'backend' => 'TYPO3\\CMS\\Core\\Cache\\Backend\\Typo3DatabaseBackend',
+                            'backend' => Typo3DatabaseBackend::class,
                             'options' => ['compression' => 1],
                         ],
                     ],

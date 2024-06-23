@@ -70,7 +70,7 @@ class CacheOptimizerRegistry implements SingletonInterface
      */
     public static function getInstance(): self
     {
-        return GeneralUtility::makeInstance('Tx\\Cacheopt\\CacheOptimizerRegistry');
+        return GeneralUtility::makeInstance(self::class);
     }
 
     /**
