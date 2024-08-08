@@ -16,7 +16,7 @@ namespace Tx\Cacheopt\Tests\Functional;
 
 use Tx\Cacheopt\CacheOptimizerFiles;
 use TYPO3\CMS\Core\Localization\LanguageServiceFactory;
-use TYPO3\CMS\Core\Resource\DuplicationBehavior;
+use TYPO3\CMS\Core\Resource\Enum\DuplicationBehavior;
 use TYPO3\CMS\Core\Resource\ResourceStorage;
 use TYPO3\CMS\Core\Resource\StorageRepository;
 use TYPO3\CMS\Core\Utility\File\ExtendedFileUtility;

@@ -18,7 +18,8 @@ namespace Tx\Cacheopt\Tests\Functional\Support;
  */
 
 use Psr\EventDispatcher\EventDispatcherInterface;
-use TYPO3\CMS\Core\Configuration\SiteConfiguration;
+use TYPO3\CMS\Core\Cache\Frontend\NullFrontend;
+use TYPO3\CMS\Core\Configuration\SiteWriter;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -53,9 +54,10 @@ trait SiteBasedTestTrait
         if (!empty($errorHandling)) {
             $configuration['errorHandling'] = $errorHandling;
         }
-        $siteConfiguration = new SiteConfiguration(
+        $siteConfiguration = new SiteWriter(
             $this->instancePath . '/typo3conf/sites/',
             GeneralUtility::makeInstance(EventDispatcherInterface::class),
+            new NullFrontend('dummy'),
         );
 
         // Ensure no previous site configuration influences the test
