@@ -28,6 +28,8 @@ use TYPO3\CMS\Core\Resource\Event\AfterFileRenamedEvent;
 use TYPO3\CMS\Core\Resource\Event\AfterFileReplacedEvent;
 use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use InvalidArgumentException;
+use RuntimeException;
 
 /**
  * This cache optimizer hooks into the ResourceStorage and clears the cache
@@ -54,9 +56,9 @@ class CacheOptimizerFiles
      * Will be called after a file is added to a directory and flushes
      * all caches related to this directory.
      *
-     * @throws \RuntimeException
+     * @throws RuntimeException
      * @throws NoSuchCacheGroupException
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function handleFileAddPost(AfterFileAddedEvent $event): void
     {
@@ -74,9 +76,9 @@ class CacheOptimizerFiles
      * Will be called after a file was copied.
      * The cache for all pages related to the target folder will be flushed.
      *
-     * @throws \RuntimeException
+     * @throws RuntimeException
      * @throws NoSuchCacheGroupException
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function handleFileCopyPost(AfterFileCopiedEvent $event): void
     {
@@ -90,8 +92,8 @@ class CacheOptimizerFiles
      * Will be called after a fil was created.
      * The cache for all pages related to the target folder will be flushed.
      *
-     * @throws \RuntimeException
-     * @throws \InvalidArgumentException
+     * @throws RuntimeException
+     * @throws InvalidArgumentException
      * @throws NoSuchCacheGroupException
      */
     public function handleFileCreatePost(AfterFileCreatedEvent $event): void
@@ -106,9 +108,9 @@ class CacheOptimizerFiles
      * Will be called ater a file was deleted.
      * The cache for all pages related to the containing folder will be flushed.
      *
-     * @throws \RuntimeException
+     * @throws RuntimeException
      * @throws NoSuchCacheGroupException
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function handleFileDeletePost(AfterFileDeletedEvent $event): void
     {
@@ -124,8 +126,8 @@ class CacheOptimizerFiles
      * The cache for all pages pointing to the source directory, to the target directory
      * or to the moved file will be flushed.
      *
-     * @throws \RuntimeException
-     * @throws \InvalidArgumentException
+     * @throws RuntimeException
+     * @throws InvalidArgumentException
      * @throws NoSuchCacheGroupException
      */
     public function handleFileMovePost(AfterFileMovedEvent $event): void
@@ -145,7 +147,7 @@ class CacheOptimizerFiles
      * Flushes the cache for all pages pointing to the file or its parent directory.
      *
      * @throws NoSuchCacheGroupException
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function handleFileRenamePost(AfterFileRenamedEvent $event): void
     {
@@ -162,7 +164,7 @@ class CacheOptimizerFiles
      * Flushes the cache for all pages pointing to the file or its parent directory.
      *
      * @throws NoSuchCacheGroupException
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function handleFileReplacePost(AfterFileReplacedEvent $event): void
     {
@@ -180,7 +182,7 @@ class CacheOptimizerFiles
      * Flushes the cache for all pages pointing to the file or its parent directory.
      *
      * @throws NoSuchCacheGroupException
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function handleFileSetContentsPost(AfterFileContentsSetEvent $event): void
     {
@@ -246,8 +248,8 @@ class CacheOptimizerFiles
             ->andWhere(
                 $queryBuilder->expr()->eq(
                     'folder_identifier',
-                    $queryBuilder->createNamedParameter($combinedFolderIdentifier)
-                )
+                    $queryBuilder->createNamedParameter($combinedFolderIdentifier),
+                ),
             );
 
         $fileCollectionResult = $queryBuilder->executeQuery();

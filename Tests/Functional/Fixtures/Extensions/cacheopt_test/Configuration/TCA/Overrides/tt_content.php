@@ -9,11 +9,11 @@ defined('TYPO3') || exit;
 ExtensionUtility::registerPlugin(
     'CacheoptTest',
     'RecordRenderPlugin',
-    'Cacheopt - Record renderer plugin'
+    'Cacheopt - Record renderer plugin',
 );
 
 ExtensionUtility::registerPlugin(
     'CacheoptTest',
     'RecordRenderContent',
-    'Cacheopt - Record renderer content'
+    'Cacheopt - Record renderer content',
 );
