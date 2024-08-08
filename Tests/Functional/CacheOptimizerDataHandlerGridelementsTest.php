@@ -32,13 +32,13 @@ class CacheOptimizerDataHandlerGridelementsTest extends CacheOptimizerTestAbstra
         parent::setUp();
 
         $this->importDataSet(
-            ORIGINAL_ROOT . 'typo3conf/ext/cacheopt/Tests/Functional/Fixtures/Database/gridelements/pages.xml'
+            ORIGINAL_ROOT . 'typo3conf/ext/cacheopt/Tests/Functional/Fixtures/Database/gridelements/pages.xml',
         );
         $this->importDataSet(
-            ORIGINAL_ROOT . 'typo3conf/ext/cacheopt/Tests/Functional/Fixtures/Database/gridelements/sys_template.xml'
+            ORIGINAL_ROOT . 'typo3conf/ext/cacheopt/Tests/Functional/Fixtures/Database/gridelements/sys_template.xml',
         );
         $this->importDataSet(
-            ORIGINAL_ROOT . 'typo3conf/ext/cacheopt/Tests/Functional/Fixtures/Database/gridelements/tt_content.xml'
+            ORIGINAL_ROOT . 'typo3conf/ext/cacheopt/Tests/Functional/Fixtures/Database/gridelements/tt_content.xml',
         );
     }
 
@@ -55,7 +55,7 @@ class CacheOptimizerDataHandlerGridelementsTest extends CacheOptimizerTestAbstra
         $this->getActionService()->modifyRecord(
             'tt_content',
             self::CONTENT_UID_REFERENCED,
-            ['header' => 'referencing_content_mod']
+            ['header' => 'referencing_content_mod'],
         );
         $this->assertPageCacheIsEmpty(self::PAGE_UID_REFERENCING_CONTENT);
     }

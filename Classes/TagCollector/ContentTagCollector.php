@@ -26,7 +26,7 @@ class ContentTagCollector extends AbstractTagCollector implements ContentObjectP
      * @param ContentObjectRenderer $parentObject Parent content object
      */
     public function postProcessContentObjectInitialization(
-        ContentObjectRenderer &$parentObject
+        ContentObjectRenderer &$parentObject,
     ): void {
         $tsfe = $this->getTypoScriptFrontendController();
         if (!$tsfe instanceof TypoScriptFrontendController) {

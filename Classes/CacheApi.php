@@ -19,6 +19,7 @@ use TYPO3\CMS\Core\Cache\Exception\NoSuchCacheGroupException;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use InvalidArgumentException;
 
 /**
  * API methods that can be used by extensions.
@@ -35,7 +36,7 @@ class CacheApi implements SingletonInterface
      *                             hooks registered for clearPageCacheEval are called (e.g. those of realurl).
      *
      * @throws NoSuchCacheGroupException
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function flushCacheForPage(int $pageId, bool $useDataHandler): void
     {
@@ -55,7 +56,7 @@ class CacheApi implements SingletonInterface
      * This process makes sure that the hooks registered for clearPageCacheEval
      * are called (e.g. those of cacheopt or those of realurl).
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function flushCacheForRecordWithDataHandler(string $tablename, int $uid): void
     {
@@ -69,7 +70,7 @@ class CacheApi implements SingletonInterface
     /**
      * Loads an instance of the cache manager in the cacheManager class variable.
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     protected function initializeCacheManager(): void
     {

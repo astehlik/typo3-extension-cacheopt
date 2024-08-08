@@ -19,6 +19,9 @@ use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use InvalidArgumentException;
+use PDO;
+use RuntimeException;
 
 /**
  * This cache optimizer hooks into the data handler to determine additional
@@ -44,13 +47,13 @@ class CacheOptimizerDataHandler
      *                          uid =>  the uid of the record
      *                          functionID => is always clear_cache()
      *
-     * @throws \InvalidArgumentException
-     * @throws \RuntimeException
+     * @throws InvalidArgumentException
+     * @throws RuntimeException
      */
     public function dataHandlerClearPageCacheEval(
         array $parameters,
         /** @noinspection PhpUnusedParameterInspection */
-        DataHandler $dataHandler
+        DataHandler $dataHandler,
     ): void {
         $this->initialize();
 
@@ -88,13 +91,13 @@ class CacheOptimizerDataHandler
 
         $pidQuery = $queryBuilder->expr()->notIn(
             'pid',
-            $queryBuilder->createNamedParameter($flushedCachePids, ArrayParameterType::INTEGER)
+            $queryBuilder->createNamedParameter($flushedCachePids, ArrayParameterType::INTEGER),
         );
 
         if ($neverExcludeRoot) {
             $pidQuery = $queryBuilder->expr()->or(
                 $pidQuery,
-                $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT))
+                $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter(0, PDO::PARAM_INT)),
             );
         }
 
@@ -114,7 +117,7 @@ class CacheOptimizerDataHandler
         if ($contentTypesForTable !== []) {
             $orStatements[] = $queryBuilder->expr()->in(
                 'tt_content.CType',
-                $queryBuilder->createNamedParameter($contentTypesForTable, ArrayParameterType::STRING)
+                $queryBuilder->createNamedParameter($contentTypesForTable, ArrayParameterType::STRING),
             );
         }
 
@@ -124,8 +127,8 @@ class CacheOptimizerDataHandler
                 $queryBuilder->expr()->eq('tt_content.CType', $queryBuilder->createNamedParameter('list')),
                 $queryBuilder->expr()->in(
                     'tt_content.list_type',
-                    $queryBuilder->createNamedParameter($pluginTypesForTable, ArrayParameterType::STRING)
-                )
+                    $queryBuilder->createNamedParameter($pluginTypesForTable, ArrayParameterType::STRING),
+                ),
             );
         }
 
@@ -144,7 +147,7 @@ class CacheOptimizerDataHandler
     /**
      * Initializes required objects.
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     protected function initialize(): void
     {
@@ -168,8 +171,8 @@ class CacheOptimizerDataHandler
      * Registers all pages for cache flush that contain contents related to records of the given table.
      * Internal use, should be called by flushRelatedCacheForRecord() only!
      *
-     * @throws \InvalidArgumentException
-     * @throws \RuntimeException
+     * @throws InvalidArgumentException
+     * @throws RuntimeException
      */
     protected function registerRelatedPluginPagesForCacheFlush(string $table): void
     {

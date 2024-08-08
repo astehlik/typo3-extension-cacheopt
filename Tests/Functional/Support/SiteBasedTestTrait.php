@@ -32,7 +32,7 @@ trait SiteBasedTestTrait
 {
     protected function buildSiteConfiguration(
         int $rootPageId,
-        string $base = ''
+        string $base = '',
     ): array {
         return [
             'rootPageId' => $rootPageId,
@@ -44,7 +44,7 @@ trait SiteBasedTestTrait
         string $identifier,
         array $site = [],
         array $languages = [],
-        array $errorHandling = []
+        array $errorHandling = [],
     ): void {
         $configuration = $site;
         if (!empty($languages)) {
@@ -55,7 +55,7 @@ trait SiteBasedTestTrait
         }
         $siteConfiguration = new SiteConfiguration(
             $this->instancePath . '/typo3conf/sites/',
-            GeneralUtility::makeInstance(EventDispatcherInterface::class)
+            GeneralUtility::makeInstance(EventDispatcherInterface::class),
         );
 
         // Ensure no previous site configuration influences the test

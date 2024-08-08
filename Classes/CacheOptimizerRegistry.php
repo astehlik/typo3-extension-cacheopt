@@ -16,6 +16,7 @@ namespace Tx\Cacheopt;
 
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use InvalidArgumentException;
 
 /**
  * Central registry that contains information about which tables are connected
@@ -66,7 +67,7 @@ class CacheOptimizerRegistry implements SingletonInterface
     /**
      * Returns an instance of the CacheOptimizerRegistry.
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public static function getInstance(): self
     {

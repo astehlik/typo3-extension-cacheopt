@@ -56,7 +56,7 @@ class CacheOptimizerDataHandlerTest extends CacheOptimizerTestAbstract
         $this->getActionService()->modifyRecord(
             'tt_content',
             self::CONTENT_UID_SIMPLE,
-            ['header' => 'referenced_content_mod']
+            ['header' => 'referenced_content_mod'],
         );
         $this->assertPageCacheIsEmpty(self::PAGE_UID_NORMAL);
     }
@@ -71,7 +71,7 @@ class CacheOptimizerDataHandlerTest extends CacheOptimizerTestAbstract
         $this->getActionService()->modifyRecord(
             'tt_content',
             self::CONTENT_UID_REFERENCED,
-            ['header' => 'referencing_content_mod']
+            ['header' => 'referencing_content_mod'],
         );
         $this->assertPageCacheIsEmpty(self::PAGE_UID_REFERENCING_CONTENT);
     }
@@ -87,7 +87,7 @@ class CacheOptimizerDataHandlerTest extends CacheOptimizerTestAbstract
         $this->getActionService()->modifyRecord(
             'sys_file_metadata',
             self::FILE_METADATA_UID_REFERENCED_IN_DIRECTORY,
-            ['title' => 'testtitle_referenced']
+            ['title' => 'testtitle_referenced'],
         );
         $this->assertPageCacheIsEmpty(self::PAGE_UID_REFERENCED_DIRECTORY);
     }
@@ -102,7 +102,7 @@ class CacheOptimizerDataHandlerTest extends CacheOptimizerTestAbstract
         $this->getActionService()->modifyRecord(
             'sys_file_metadata',
             self::FILE_METADATA_UID_REFERENCED,
-            ['title' => 'testtitle_referenced_in_dir']
+            ['title' => 'testtitle_referenced_in_dir'],
         );
         $this->assertPageCacheIsEmpty(self::PAGE_UID_REFERENCED_FILE);
     }
@@ -117,7 +117,7 @@ class CacheOptimizerDataHandlerTest extends CacheOptimizerTestAbstract
         $this->getActionService()->modifyRecord(
             'pages',
             self::PAGE_UID_REFERENCED_IN_MENU_IN_SUBLEVEL,
-            ['title' => 'page_referenced_in_menu_modified']
+            ['title' => 'page_referenced_in_menu_modified'],
         );
         $this->assertPageCacheIsEmpty(self::PAGE_UID_CONTAINING_MENU);
     }
@@ -134,7 +134,7 @@ class CacheOptimizerDataHandlerTest extends CacheOptimizerTestAbstract
         $this->getActionService()->modifyRecord(
             'pages',
             self::PAGE_UID_REFERENCED_IN_MENU,
-            ['title' => 'page_referenced_in_menu_modified']
+            ['title' => 'page_referenced_in_menu_modified'],
         );
         $this->assertPageCacheIsEmpty(self::PAGE_UID_CONTAINING_MENU);
     }
@@ -149,7 +149,7 @@ class CacheOptimizerDataHandlerTest extends CacheOptimizerTestAbstract
         $this->getActionService()->modifyRecord(
             'tx_cacheopttest_domain_model_record',
             self::CACHEOPT_RECORD_UID,
-            ['title' => 'testrecord_modified_content']
+            ['title' => 'testrecord_modified_content'],
         );
         $this->assertPageCacheIsEmpty(self::PAGE_UID_CONTAINING_EXT_CONTENT);
     }
@@ -164,7 +164,7 @@ class CacheOptimizerDataHandlerTest extends CacheOptimizerTestAbstract
         $this->getActionService()->modifyRecord(
             'tx_cacheopttest_domain_model_record',
             self::CACHEOPT_RECORD_UID,
-            ['title' => 'testrecord_modified_plugin']
+            ['title' => 'testrecord_modified_plugin'],
         );
         $this->assertPageCacheIsEmpty(self::PAGE_UID_CONTAINING_EXT_PLUGIN);
     }
