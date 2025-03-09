@@ -15,8 +15,8 @@ namespace Tx\Cacheopt\TagCollector;
  *                                                                        */
 
 use TYPO3\CMS\Core\Attribute\AsEventListener;
+use TYPO3\CMS\Core\Cache\CacheTag;
 use TYPO3\CMS\Frontend\ContentObject\Event\AfterContentObjectRendererInitializedEvent;
-use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 class ContentTagCollector extends AbstractTagCollector
 {
@@ -24,8 +24,9 @@ class ContentTagCollector extends AbstractTagCollector
     public function __invoke(
         AfterContentObjectRendererInitializedEvent $event,
     ): void {
-        $tsfe = $this->getTypoScriptFrontendController();
-        if (!$tsfe instanceof TypoScriptFrontendController) {
+        $frontendCacheCollector = $this->getFrontendCacheCollector();
+
+        if ($frontendCacheCollector === null) {
             return;
         }
 
@@ -40,12 +41,12 @@ class ContentTagCollector extends AbstractTagCollector
             return;
         }
 
-        $cacheTags[] = $table . '_' . $uid;
+        $cacheTags[] = new CacheTag($table . '_' . $uid);
 
         if (array_key_exists('_LOCALIZED_UID', $contentData) && (int)$contentData['_LOCALIZED_UID'] !== 0) {
-            $cacheTags[] = $table . '_' . $contentData['_LOCALIZED_UID'];
+            $cacheTags[] = new CacheTag($table . '_' . $contentData['_LOCALIZED_UID']);
         }
 
-        $tsfe->addCacheTags($cacheTags);
+        $frontendCacheCollector->addCacheTags(...$cacheTags);
     }
 }
