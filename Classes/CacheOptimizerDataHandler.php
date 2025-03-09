@@ -15,13 +15,13 @@ namespace Tx\Cacheopt;
  *                                                                        */
 
 use Doctrine\DBAL\ArrayParameterType;
+use InvalidArgumentException;
+use PDO;
+use RuntimeException;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use InvalidArgumentException;
-use PDO;
-use RuntimeException;
 
 /**
  * This cache optimizer hooks into the data handler to determine additional
