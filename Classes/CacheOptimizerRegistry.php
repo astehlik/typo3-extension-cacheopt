@@ -96,8 +96,7 @@ class CacheOptimizerRegistry implements SingletonInterface
     }
 
     /**
-     * Returns an array containing all plugin types that belong to the given
-     * table or NULL if no plugin types are registered.
+     * Returns an array containing all plugin types that belong to the given table.
      */
     public function getPluginTypesForTable(string $table): array
     {
