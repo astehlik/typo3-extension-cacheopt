@@ -15,8 +15,8 @@ namespace Tx\Cacheopt;
  *                                                                        */
 
 use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\ParameterType;
 use InvalidArgumentException;
-use PDO;
 use RuntimeException;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
@@ -97,7 +97,7 @@ class CacheOptimizerDataHandler
         if ($neverExcludeRoot) {
             $pidQuery = $queryBuilder->expr()->or(
                 $pidQuery,
-                $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter(0, PDO::PARAM_INT)),
+                $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter(0, ParameterType::INTEGER)),
             );
         }
 
