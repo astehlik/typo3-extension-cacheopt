@@ -25,8 +25,10 @@ class CacheOptimizerDataHandlerGridelementsTest extends CacheOptimizerTestAbstra
 
     protected function setUp(): void
     {
-        // TODO: re-enable when gridelements is available for version 10
+        // TODO: re-enable when gridelements should be supported again.
         return;
+
+        // @phpstan-ignore-next-line
         $this->testExtensionsToLoad[] = 'typo3conf/ext/gridelements';
 
         parent::setUp();
@@ -48,9 +50,10 @@ class CacheOptimizerDataHandlerGridelementsTest extends CacheOptimizerTestAbstra
      */
     public function testContentChangeClearsCacheForRelatedRecordContentsWithinGridelements(): void
     {
-        // TODO: re-enable when gridelements is available for version 10
+        // TODO: re-enable when gridelements should be supported again.
         self::markTestSkipped('gridelements it not yet available for verison 10');
-        return;
+
+        // @phpstan-ignore-next-line
         $this->fillPageCache(self::PAGE_UID_REFERENCING_CONTENT);
         $this->getActionService()->modifyRecord(
             'tt_content',

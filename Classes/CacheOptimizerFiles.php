@@ -14,6 +14,8 @@ namespace Tx\Cacheopt;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use InvalidArgumentException;
+use RuntimeException;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Exception\NoSuchCacheGroupException;
 use TYPO3\CMS\Core\Database\ConnectionPool;
@@ -28,8 +30,6 @@ use TYPO3\CMS\Core\Resource\Event\AfterFileRenamedEvent;
 use TYPO3\CMS\Core\Resource\Event\AfterFileReplacedEvent;
 use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use InvalidArgumentException;
-use RuntimeException;
 
 /**
  * This cache optimizer hooks into the ResourceStorage and clears the cache

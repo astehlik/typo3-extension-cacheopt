@@ -18,7 +18,8 @@ namespace Tx\Cacheopt\Tests\Functional\Support;
  */
 
 use Psr\EventDispatcher\EventDispatcherInterface;
-use TYPO3\CMS\Core\Cache\Frontend\NullFrontend;
+use Psr\Log\NullLogger;
+use TYPO3\CMS\Core\Configuration\Loader\YamlFileLoader;
 use TYPO3\CMS\Core\Configuration\SiteWriter;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -57,7 +58,7 @@ trait SiteBasedTestTrait
         $siteConfiguration = new SiteWriter(
             $this->instancePath . '/typo3conf/sites/',
             GeneralUtility::makeInstance(EventDispatcherInterface::class),
-            new NullFrontend('dummy'),
+            new YamlFileLoader(new NullLogger()),
         );
 
         // Ensure no previous site configuration influences the test

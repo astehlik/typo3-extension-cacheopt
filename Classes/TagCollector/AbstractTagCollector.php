@@ -5,24 +5,21 @@ declare(strict_types=1);
 namespace Tx\Cacheopt\TagCollector;
 
 use Psr\Http\Message\ServerRequestInterface;
-use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
+use TYPO3\CMS\Core\Cache\CacheDataCollector;
 
 abstract class AbstractTagCollector
 {
-    protected function getTypoScriptFrontendController(): ?TypoScriptFrontendController
+    protected function getFrontendCacheCollector(): ?CacheDataCollector
+    {
+        $cacheCollector = $this->getRequest()?->getAttribute('frontend.cache.collector');
+
+        return $cacheCollector instanceof CacheDataCollector ? $cacheCollector : null;
+    }
+
+    protected function getRequest(): ?ServerRequestInterface
     {
         $typo3Request = $GLOBALS['TYPO3_REQUEST'] ?? null;
 
-        if (!$typo3Request instanceof ServerRequestInterface) {
-            return null;
-        }
-
-        $frontendController = $typo3Request->getAttribute('frontend.controller');
-
-        if (!$frontendController instanceof TypoScriptFrontendController) {
-            return null;
-        }
-
-        return $frontendController;
+        return $typo3Request instanceof ServerRequestInterface ? $typo3Request : null;
     }
 }

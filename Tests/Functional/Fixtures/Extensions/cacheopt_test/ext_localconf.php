@@ -7,7 +7,10 @@
 defined('TYPO3') or die();
 
 /** @uses \Tx\CacheoptTest\Controller\RecordController::displayAction() */
-TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
+// Silence deprecation warnings about list_type content elements because we still
+// want to support them as long as they exist.
+// TODO: remove when upgrading to TYPO3 14
+@TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
     'CacheoptTest',
     'RecordRenderPlugin',
     [\Tx\CacheoptTest\Controller\RecordController::class => 'display']

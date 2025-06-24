@@ -15,13 +15,13 @@ namespace Tx\Cacheopt;
  *                                                                        */
 
 use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\ParameterType;
+use InvalidArgumentException;
+use RuntimeException;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use InvalidArgumentException;
-use PDO;
-use RuntimeException;
 
 /**
  * This cache optimizer hooks into the data handler to determine additional
@@ -97,7 +97,7 @@ class CacheOptimizerDataHandler
         if ($neverExcludeRoot) {
             $pidQuery = $queryBuilder->expr()->or(
                 $pidQuery,
-                $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter(0, PDO::PARAM_INT)),
+                $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter(0, ParameterType::INTEGER)),
             );
         }
 

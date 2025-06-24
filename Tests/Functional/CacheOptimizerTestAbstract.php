@@ -14,6 +14,10 @@ namespace Tx\Cacheopt\Tests\Functional;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use FilesystemIterator;
+use RecursiveDirectoryIterator;
+use RuntimeException;
+use SplFileInfo;
 use Tx\Cacheopt\Tests\Functional\Mocks\ResourceStorageMock;
 use Tx\Cacheopt\Tests\Functional\Support\SiteBasedTestTrait;
 use TYPO3\CMS\Core\Cache\Backend\Typo3DatabaseBackend;
@@ -25,10 +29,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\TestingFramework\Core\Functional\Framework\DataHandling\ActionService;
 use TYPO3\TestingFramework\Core\Functional\Framework\Frontend\InternalRequest;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
-use FilesystemIterator;
-use RecursiveDirectoryIterator;
-use RuntimeException;
-use SplFileInfo;
 
 /**
  * Base class for all functional tests of the cache optimizer.

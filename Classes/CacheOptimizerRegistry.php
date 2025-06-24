@@ -14,9 +14,9 @@ namespace Tx\Cacheopt;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use InvalidArgumentException;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use InvalidArgumentException;
 
 /**
  * Central registry that contains information about which tables are connected
@@ -96,8 +96,7 @@ class CacheOptimizerRegistry implements SingletonInterface
     }
 
     /**
-     * Returns an array containing all plugin types that belong to the given
-     * table or NULL if no plugin types are registered.
+     * Returns an array containing all plugin types that belong to the given table.
      */
     public function getPluginTypesForTable(string $table): array
     {
