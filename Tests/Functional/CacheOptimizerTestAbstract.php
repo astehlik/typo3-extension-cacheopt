@@ -112,7 +112,7 @@ abstract class CacheOptimizerTestAbstract extends FunctionalTestCase
     protected function assertPageCacheIsEmpty(int $pageUid): void
     {
         $cacheEntries = $this->getPageCacheRecords($pageUid);
-        self::assertCount(0, $cacheEntries, 'Page cache for page ' . $pageUid . ' is not empty.');
+        $this->assertCount(0, $cacheEntries, 'Page cache for page ' . $pageUid . ' is not empty.');
     }
 
     /**
@@ -128,7 +128,7 @@ abstract class CacheOptimizerTestAbstract extends FunctionalTestCase
             ->executeQuery()
             ->fetchOne();
 
-        self::assertGreaterThanOrEqual(1, $entryCount, 'Page cache for page ' . $pageUid . ' is not filled.');
+        $this->assertGreaterThanOrEqual(1, $entryCount, 'Page cache for page ' . $pageUid . ' is not filled.');
     }
 
     protected function buildPageCacheTag(int $pageUid): string
