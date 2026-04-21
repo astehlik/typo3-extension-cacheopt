@@ -14,24 +14,23 @@ namespace Tx\Cacheopt\TagCollector;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use TYPO3\CMS\Frontend\ContentObject\ContentObjectPostInitHookInterface;
-use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
-use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
+use TYPO3\CMS\Core\Attribute\AsEventListener;
+use TYPO3\CMS\Core\Cache\CacheTag;
+use TYPO3\CMS\Frontend\ContentObject\Event\AfterContentObjectRendererInitializedEvent;
 
-class ContentTagCollector extends AbstractTagCollector implements ContentObjectPostInitHookInterface
+class ContentTagCollector extends AbstractTagCollector
 {
-    /**
-     * Hook for post processing the initialization of ContentObjectRenderer.
-     *
-     * @param ContentObjectRenderer $parentObject Parent content object
-     */
-    public function postProcessContentObjectInitialization(
-        ContentObjectRenderer &$parentObject
+    #[AsEventListener]
+    public function __invoke(
+        AfterContentObjectRendererInitializedEvent $event,
     ): void {
-        $tsfe = $this->getTypoScriptFrontendController();
-        if (!$tsfe instanceof TypoScriptFrontendController) {
+        $frontendCacheCollector = $this->getFrontendCacheCollector();
+
+        if ($frontendCacheCollector === null) {
             return;
         }
+
+        $parentObject = $event->getContentObjectRenderer();
 
         $cacheTags = [];
         $contentData = $parentObject->data;
@@ -42,12 +41,12 @@ class ContentTagCollector extends AbstractTagCollector implements ContentObjectP
             return;
         }
 
-        $cacheTags[] = $table . '_' . $uid;
+        $cacheTags[] = new CacheTag($table . '_' . $uid);
 
         if (array_key_exists('_LOCALIZED_UID', $contentData) && (int)$contentData['_LOCALIZED_UID'] !== 0) {
-            $cacheTags[] = $table . '_' . $contentData['_LOCALIZED_UID'];
+            $cacheTags[] = new CacheTag($table . '_' . $contentData['_LOCALIZED_UID']);
         }
 
-        $tsfe->addCacheTags($cacheTags);
+        $frontendCacheCollector->addCacheTags(...$cacheTags);
     }
 }

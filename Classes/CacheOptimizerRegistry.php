@@ -14,6 +14,7 @@ namespace Tx\Cacheopt;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use InvalidArgumentException;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -66,11 +67,11 @@ class CacheOptimizerRegistry implements SingletonInterface
     /**
      * Returns an instance of the CacheOptimizerRegistry.
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public static function getInstance(): self
     {
-        return GeneralUtility::makeInstance('Tx\\Cacheopt\\CacheOptimizerRegistry');
+        return GeneralUtility::makeInstance(self::class);
     }
 
     /**
@@ -95,8 +96,7 @@ class CacheOptimizerRegistry implements SingletonInterface
     }
 
     /**
-     * Returns an array containing all plugin types that belong to the given
-     * table or NULL if no plugin types are registered.
+     * Returns an array containing all plugin types that belong to the given table.
      */
     public function getPluginTypesForTable(string $table): array
     {

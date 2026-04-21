@@ -14,8 +14,13 @@ namespace Tx\Cacheopt\Tests\Functional;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use FilesystemIterator;
+use RecursiveDirectoryIterator;
+use RuntimeException;
+use SplFileInfo;
 use Tx\Cacheopt\Tests\Functional\Mocks\ResourceStorageMock;
 use Tx\Cacheopt\Tests\Functional\Support\SiteBasedTestTrait;
+use TYPO3\CMS\Core\Cache\Backend\Typo3DatabaseBackend;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Localization\LanguageServiceFactory;
@@ -85,7 +90,7 @@ abstract class CacheOptimizerTestAbstract extends FunctionalTestCase
 
         $this->configurationToUseInTestInstance = array_merge_recursive(
             $this->configurationToUseInTestInstance,
-            $this->buildDatabaseCacheConfig()
+            $this->buildDatabaseCacheConfig(),
         );
 
         parent::setUp();
@@ -97,7 +102,7 @@ abstract class CacheOptimizerTestAbstract extends FunctionalTestCase
 
         $this->writeSiteConfiguration(
             'website-local',
-            $this->buildSiteConfiguration(128, '/')
+            $this->buildSiteConfiguration(128, '/'),
         );
     }
 
@@ -107,7 +112,7 @@ abstract class CacheOptimizerTestAbstract extends FunctionalTestCase
     protected function assertPageCacheIsEmpty(int $pageUid): void
     {
         $cacheEntries = $this->getPageCacheRecords($pageUid);
-        self::assertCount(0, $cacheEntries, 'Page cache for page ' . $pageUid . ' is not empty.');
+        $this->assertCount(0, $cacheEntries, 'Page cache for page ' . $pageUid . ' is not empty.');
     }
 
     /**
@@ -123,7 +128,7 @@ abstract class CacheOptimizerTestAbstract extends FunctionalTestCase
             ->executeQuery()
             ->fetchOne();
 
-        self::assertGreaterThanOrEqual(1, $entryCount, 'Page cache for page ' . $pageUid . ' is not filled.');
+        $this->assertGreaterThanOrEqual(1, $entryCount, 'Page cache for page ' . $pageUid . ' is not filled.');
     }
 
     protected function buildPageCacheTag(int $pageUid): string
@@ -134,24 +139,24 @@ abstract class CacheOptimizerTestAbstract extends FunctionalTestCase
     /**
      * Copies the files defined in $filesToCopyInTestInstance to the test instance.
      *
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     protected function copyFilesToTestInstance(): void
     {
         foreach ($this->filesToCopyInTestInstance as $sourcePathToLinkInTestInstance => $destinationPathToLinkInTestInstance) {
             $sourcePath = ORIGINAL_ROOT . '/' . ltrim($sourcePathToLinkInTestInstance, '/');
             if (!file_exists($sourcePath)) {
-                throw new \RuntimeException(
+                throw new RuntimeException(
                     'Path ' . $sourcePath . ' not found',
-                    1376745645
+                    1376745645,
                 );
             }
             $destinationPath = $this->instancePath . '/' . ltrim($destinationPathToLinkInTestInstance, '/');
             $success = copy($sourcePath, $destinationPath);
             if (!$success) {
-                throw new \RuntimeException(
+                throw new RuntimeException(
                     'Can not copy the path ' . $sourcePath . ' to ' . $destinationPath,
-                    1389969623
+                    1389969623,
                 );
             }
         }
@@ -187,8 +192,8 @@ abstract class CacheOptimizerTestAbstract extends FunctionalTestCase
             ->where(
                 $builder->expr()->eq(
                     'cache_pages.identifier',
-                    $builder->quoteIdentifier('cache_pages_tags.identifier')
-                )
+                    $builder->quoteIdentifier('cache_pages_tags.identifier'),
+                ),
             )
             ->andWhere($builder->expr()->eq('tag', $builder->createNamedParameter($cacheTag)));
 
@@ -201,13 +206,13 @@ abstract class CacheOptimizerTestAbstract extends FunctionalTestCase
     protected function loadDatabaseFixtures(): void
     {
         $fixtureDir = ORIGINAL_ROOT . 'typo3conf/ext/cacheopt/Tests/Functional/Fixtures/Database/';
-        $iteratorMode = \FilesystemIterator::UNIX_PATHS
-            | \FilesystemIterator::SKIP_DOTS
-            | \FilesystemIterator::CURRENT_AS_FILEINFO;
-        $iterator = new \RecursiveDirectoryIterator($fixtureDir, $iteratorMode);
+        $iteratorMode = FilesystemIterator::UNIX_PATHS
+            | FilesystemIterator::SKIP_DOTS
+            | FilesystemIterator::CURRENT_AS_FILEINFO;
+        $iterator = new RecursiveDirectoryIterator($fixtureDir, $iteratorMode);
 
         while ($iterator->valid()) {
-            /** @var \SplFileInfo $entry */
+            /** @var SplFileInfo $entry */
             $entry = $iterator->current();
             // Skip non-files/non-folders, and empty entries.
             if (!$entry->isFile() || $entry->isDir() || $entry->getFilename() === '') {
@@ -232,7 +237,7 @@ abstract class CacheOptimizerTestAbstract extends FunctionalTestCase
                 'caching' => [
                     'cacheConfigurations' => [
                         'pages' => [
-                            'backend' => 'TYPO3\\CMS\\Core\\Cache\\Backend\\Typo3DatabaseBackend',
+                            'backend' => Typo3DatabaseBackend::class,
                             'options' => ['compression' => 1],
                         ],
                     ],

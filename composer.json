@@ -11,17 +11,13 @@
 		}
 	],
 	"require": {
-		"php": "^8.1",
+		"php": "^8.2",
 		"ext-pdo": "*",
-		"typo3/cms-core": "^12.4"
+		"typo3/cms-core": "~13.4.0"
 	},
 	"require-dev": {
-		"de-swebhosting/php-codestyle": "^4.0",
-		"de-swebhosting/typo3-extension-buildtools": "dev-TYPO3_12",
-		"ergebnis/composer-normalize": "^2.28",
-		"friendsofphp/php-cs-fixer": "^3.14",
-		"michielroos/typo3scan": "^1.7",
-		"squizlabs/php_codesniffer": "^3.7",
+		"de-swebhosting/typo3-extension-buildtools": "dev-TYPO3_13",
+		"phpunit/phpunit": "^11.5.50",
 		"typo3/cms-fluid-styled-content": "*"
 	},
 	"autoload": {
@@ -42,7 +38,7 @@
 			"typo3/class-alias-loader": true,
 			"typo3/cms-composer-installers": true
 		},
-		"bin-dir": ".Build/bin",
+		"bin-dir": "bin",
 		"vendor-dir": ".Build/vendor"
 	},
 	"extra": {

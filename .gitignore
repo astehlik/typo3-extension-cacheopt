@@ -1,5 +1,6 @@
-.Build
-Build/testing-docker/.env
-composer.lock
-.php-cs-fixer.cache
-/var
+/.Build/*
+/.cache
+/.php-cs-fixer.cache
+/.phpunit.result.cache
+/bin
+/composer.lock

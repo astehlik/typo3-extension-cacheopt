@@ -46,7 +46,7 @@ return static function (ContainerConfigurator $containerConfigurator, ContainerB
                     'event' => $eventClassName,
                     'method' => $handlerMethod,
                     'identifier' => 'cacheopt/cache-optimizer-files-' . strtolower($handlerMethod),
-                ]
+                ],
             );
     }
 
@@ -58,6 +58,6 @@ return static function (ContainerConfigurator $containerConfigurator, ContainerB
             /** @uses FileTagCollector::collectTagsForPreGeneratePublicUrl() */
             'method' => 'collectTagsForPreGeneratePublicUrl',
             'identifier' => 'cacheopt/file-tag-collector',
-        ]
+        ],
     );
 };

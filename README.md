@@ -1,8 +1,8 @@
 # TYPO3 Extension cacheopt
 
 [![.github/workflows/test.yml](https://github.com/astehlik/typo3-extension-cacheopt/actions/workflows/test.yml/badge.svg)](https://github.com/astehlik/typo3-extension-cacheopt/actions/workflows/test.yml)
-[![Maintainability](https://api.codeclimate.com/v1/badges/f33e31d46e2e87b9e282/maintainability)](https://codeclimate.com/github/astehlik/typo3-extension-cacheopt/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/f33e31d46e2e87b9e282/test_coverage)](https://codeclimate.com/github/astehlik/typo3-extension-cacheopt/test_coverage)
+[![Maintainability](https://qlty.sh/gh/astehlik/projects/typo3-extension-cacheopt/maintainability.svg)](https://qlty.sh/gh/astehlik/projects/typo3-extension-cacheopt)
+[![Code Coverage](https://qlty.sh/gh/astehlik/projects/typo3-extension-cacheopt/coverage.svg)](https://qlty.sh/gh/astehlik/projects/typo3-extension-cacheopt)
 
 This Extension optimizes the cache clearing behavior of TYPO3:
 

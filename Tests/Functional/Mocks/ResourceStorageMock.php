@@ -34,7 +34,7 @@ class ResourceStorageMock extends ResourceStorage
         $localFilePath,
         $targetFolder,
         $targetFileName,
-        $uploadedFileSize
+        $uploadedFileSize,
     ): void {
         $this->assureFileAddPermissions($targetFolder, $targetFileName);
     }

@@ -14,18 +14,19 @@ namespace Tx\Cacheopt\TagCollector;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\CMS\Core\Cache\CacheTag;
 use TYPO3\CMS\Core\Resource\Event\GeneratePublicUrlForResourceEvent;
 use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Resource\FileReference;
 use TYPO3\CMS\Core\Resource\ProcessedFile;
-use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 class FileTagCollector extends AbstractTagCollector
 {
     public function collectTagsForPreGeneratePublicUrl(GeneratePublicUrlForResourceEvent $event): void
     {
-        $tsfe = $this->getTypoScriptFrontendController();
-        if (!$tsfe instanceof TypoScriptFrontendController) {
+        $frontendCacheCollector = $this->getFrontendCacheCollector();
+
+        if ($frontendCacheCollector === null) {
             return;
         }
 
@@ -37,18 +38,18 @@ class FileTagCollector extends AbstractTagCollector
             $file = $resourceObject;
         } elseif ($resourceObject instanceof FileReference) {
             $file = $resourceObject->getOriginalFile();
-            $cacheTags[] = 'sys_file_reference_' . $resourceObject->getUid();
+            $cacheTags[] = new CacheTag('sys_file_reference_' . $resourceObject->getUid());
         } elseif ($resourceObject instanceof ProcessedFile) {
             $file = $resourceObject->getOriginalFile();
-            $cacheTags[] = 'sys_file_processedfile_' . $resourceObject->getUid();
+            $cacheTags[] = new CacheTag('sys_file_processedfile_' . $resourceObject->getUid());
         }
 
         if ($file instanceof File) {
-            $cacheTags[] = 'sys_file_' . $file->getUid();
+            $cacheTags[] = new CacheTag('sys_file_' . $file->getUid());
             $fileMetadata = $file->getMetaData()->get();
-            $cacheTags[] = 'sys_file_metadata_' . $fileMetadata['uid'];
+            $cacheTags[] = new CacheTag('sys_file_metadata_' . $fileMetadata['uid']);
         }
 
-        $tsfe->addCacheTags($cacheTags);
+        $frontendCacheCollector->addCacheTags(...$cacheTags);
     }
 }
