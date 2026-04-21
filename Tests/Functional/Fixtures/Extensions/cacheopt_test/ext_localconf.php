@@ -11,6 +11,8 @@ TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
     'CacheoptTest',
     'RecordRenderContent',
     [\Tx\CacheoptTest\Controller\RecordController::class => 'display'],
+    [],
+    \TYPO3\CMS\Extbase\Utility\ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT
 );
 
 Tx\Cacheopt\CacheOptimizerRegistry::getInstance()->registerContentForTable(

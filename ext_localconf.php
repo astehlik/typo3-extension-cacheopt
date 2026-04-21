@@ -21,6 +21,3 @@ if (
     $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['clearPageCacheEval'][] =
         Tx\Cacheopt\CacheOptimizerDataHandler::class . '->dataHandlerClearPageCacheEval';
 }
-
-$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tslib/class.tslib_content.php']['postInit']['tx_cacheopt']
-    = Tx\Cacheopt\TagCollector\ContentTagCollector::class;

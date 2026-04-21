@@ -112,7 +112,7 @@ class CacheOptimizerFilesTest extends CacheOptimizerTestAbstract
     /**
      * Returns the default storage.
      */
-    protected function getDefaultStorage(): ResourceStorage
+    protected function getDefaultResourceStorage(): ResourceStorage
     {
         return $this->storageRepository->findByUid(self::RESOURCE_STORAGE_UID);
     }
@@ -122,7 +122,7 @@ class CacheOptimizerFilesTest extends CacheOptimizerTestAbstract
      */
     protected function getRootFolderIdentifier(): string
     {
-        $storage = $this->getDefaultStorage();
+        $storage = $this->getDefaultResourceStorage();
         $folderIdentifier = '/';
         return $storage->getUid() . ':' . $folderIdentifier;
     }
