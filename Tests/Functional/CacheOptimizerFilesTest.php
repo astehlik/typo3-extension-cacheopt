@@ -15,6 +15,7 @@ namespace Tx\Cacheopt\Tests\Functional;
  *                                                                        */
 
 use Tx\Cacheopt\CacheOptimizerFiles;
+use TYPO3\CMS\Core\Http\UploadedFile;
 use TYPO3\CMS\Core\Localization\LanguageServiceFactory;
 use TYPO3\CMS\Core\Resource\Enum\DuplicationBehavior;
 use TYPO3\CMS\Core\Resource\ResourceStorage;
@@ -91,7 +92,7 @@ class CacheOptimizerFilesTest extends CacheOptimizerTestAbstract
             ],
         ];
 
-        $this->processFileArrayAndFlushCache($fileValues);
+        $this->processFileArrayAndFlushCache($fileValues, []);
         $this->assertPageCacheIsEmpty(self::PAGE_UID_REFERENCED_FILE);
     }
 
@@ -138,9 +139,9 @@ class CacheOptimizerFilesTest extends CacheOptimizerTestAbstract
      * Lets the file processor process the given array and lets the cache
      * optimizer flush the cache for all collected pages.
      */
-    protected function processFileArrayAndFlushCache(array $fileValues): void
+    protected function processFileArrayAndFlushCache(array $fileValues, array $uploadedFiles): void
     {
-        $this->fileProcessor->start($fileValues);
+        $this->fileProcessor->start($fileValues, $uploadedFiles);
         // @extensionScannerIgnoreLine False positive.
         $this->fileProcessor->processData();
     }
@@ -149,12 +150,13 @@ class CacheOptimizerFilesTest extends CacheOptimizerTestAbstract
     {
         $uploadPosition = 'file1';
 
-        $_FILES['upload_' . $uploadPosition] = [
-            'name' => basename($filePath),
-            'type' => 'text/plain',
-            'tmp_name' => $this->instancePath . '/typo3temp/uploadfiles/testfile_referenced.txt',
-            'size' => 31,
-        ];
+        $uploadedFiles['upload_' . $uploadPosition] = new UploadedFile(
+            $this->instancePath . '/typo3temp/uploadfiles/testfile_referenced.txt',
+            31,
+            0,
+            basename($filePath),
+            'text/plain'
+        );
 
         $fileValues = [
             'upload' => [
@@ -166,6 +168,6 @@ class CacheOptimizerFilesTest extends CacheOptimizerTestAbstract
             ],
         ];
 
-        $this->processFileArrayAndFlushCache($fileValues);
+        $this->processFileArrayAndFlushCache($fileValues, $uploadedFiles);
     }
 }
