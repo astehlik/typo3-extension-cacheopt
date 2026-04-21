@@ -13,12 +13,13 @@
 	"require": {
 		"php": "^8.2",
 		"ext-pdo": "*",
-		"typo3/cms-core": "~13.4.0"
+		"typo3/cms-core": "~14.3.0"
 	},
 	"require-dev": {
-		"de-swebhosting/typo3-extension-buildtools": "dev-TYPO3_13",
+		"de-swebhosting/typo3-extension-buildtools": "dev-TYPO3_14",
 		"phpunit/phpunit": "^11.5.50",
-		"typo3/cms-fluid-styled-content": "*"
+		"typo3/cms-fluid-styled-content": "*",
+		"typo3/testing-framework": "dev-main"
 	},
 	"autoload": {
 		"psr-4": {
