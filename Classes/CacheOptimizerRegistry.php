@@ -41,14 +41,6 @@ class CacheOptimizerRegistry implements SingletonInterface
     protected array $flushedPageUids = [];
 
     /**
-     * Array containing information which table is related to which plugin type:
-     * array(
-     *   'ty_myext_mytable' => 'myext_plugintype'
-     * ).
-     */
-    protected array $pluginTypesByTable = [];
-
-    /**
      * Array containing the identifiers of the folders for which the cache has already been flushed.
      * array(
      *   'storageUid' => array('directoryIdentifier' => 1)
@@ -96,18 +88,6 @@ class CacheOptimizerRegistry implements SingletonInterface
     }
 
     /**
-     * Returns an array containing all plugin types that belong to the given table.
-     */
-    public function getPluginTypesForTable(string $table): array
-    {
-        if (!array_key_exists($table, $this->pluginTypesByTable)) {
-            return [];
-        }
-
-        return $this->pluginTypesByTable[$table];
-    }
-
-    /**
      * Returns TRUE if the given folder in the given storage was already processed.
      */
     public function isProcessedFolder(int $storageUid, string $folderIdentifier): bool
@@ -125,11 +105,7 @@ class CacheOptimizerRegistry implements SingletonInterface
 
     public function isRegisteredPluginTable(string $table): bool
     {
-        if ($this->getContentTypesForTable($table) !== []) {
-            return true;
-        }
-
-        return $this->getPluginTypesForTable($table) !== [];
+        return $this->getContentTypesForTable($table) !== [];
     }
 
     /**
@@ -184,33 +160,6 @@ class CacheOptimizerRegistry implements SingletonInterface
     public function registerPageWithFlushedCache(int $pid): void
     {
         $this->flushedPageUids[] = $pid;
-    }
-
-    /**
-     * Let the registry know that the given table is related to the given plugin type.
-     *
-     * @param string $table the name of the table
-     * @param string $listType The value in the list_type column.
-     *                         Since this makes sense in most cases TRUE is the default value.
-     *
-     * @api
-     */
-    public function registerPluginForTable(string $table, string $listType): void
-    {
-        $this->pluginTypesByTable[$table][] = $listType;
-    }
-
-    /**
-     * Let the registry know that the given tables are related to the given plugin type.
-     * All tables are automatically excluded from refindex traversal.
-     *
-     * @api
-     */
-    public function registerPluginForTables(array $tables, string $listType): void
-    {
-        foreach ($tables as $table) {
-            $this->registerPluginForTable($table, $listType);
-        }
     }
 
     /**
