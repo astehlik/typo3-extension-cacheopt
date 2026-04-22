@@ -1,0 +1,27 @@
+{
+	"name": "de-swebhosting-typo3-extension/cacheopt-test",
+	"description": "Test helper Extension for EXT:cacheopt",
+	"license": "GPL-3.0-or-later",
+	"type": "typo3-cms-extension",
+	"version": "1.0.0",
+	"authors": [
+		{
+			"name": "Alexander Stehlik",
+			"email": "alexander.stehlik@gmail.com",
+			"role": "Developer"
+		}
+	],
+	"require": {
+		"php": "^8.2"
+	},
+	"autoload": {
+		"psr-4": {
+			"Tx\\CacheoptTest\\": "Classes/"
+		}
+	},
+	"extra": {
+		"typo3/cms": {
+			"extension-key": "cacheopt_test"
+		}
+	}
+}

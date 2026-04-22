@@ -111,37 +111,18 @@ class CacheOptimizerDataHandler
     protected function getTtContentWhereStatementForTable(string $table, QueryBuilder $queryBuilder): void
     {
         $this->initialize();
-        $orStatements = [];
 
         $contentTypesForTable = $this->cacheOptimizerRegistry->getContentTypesForTable($table);
-        if ($contentTypesForTable !== []) {
-            $orStatements[] = $queryBuilder->expr()->in(
+        if ($contentTypesForTable === []) {
+            return;
+        }
+
+        $queryBuilder->andWhere(
+            $queryBuilder->expr()->in(
                 'tt_content.CType',
                 $queryBuilder->createNamedParameter($contentTypesForTable, ArrayParameterType::STRING),
-            );
-        }
-
-        $pluginTypesForTable = $this->cacheOptimizerRegistry->getPluginTypesForTable($table);
-        if ($pluginTypesForTable !== []) {
-            $orStatements[] = $queryBuilder->expr()->and(
-                $queryBuilder->expr()->eq('tt_content.CType', $queryBuilder->createNamedParameter('list')),
-                $queryBuilder->expr()->in(
-                    'tt_content.list_type',
-                    $queryBuilder->createNamedParameter($pluginTypesForTable, ArrayParameterType::STRING),
-                ),
-            );
-        }
-
-        if (count($orStatements) === 0) {
-            return;
-        }
-
-        if (count($orStatements) === 1) {
-            $queryBuilder->andWhere($orStatements[0]);
-            return;
-        }
-
-        $queryBuilder->andWhere($queryBuilder->expr()->or(...$orStatements));
+            )
+        );
     }
 
     /**

@@ -31,8 +31,6 @@ class CacheOptimizerDataHandlerTest extends CacheOptimizerTestAbstract
 
     public const PAGE_UID_CONTAINING_EXT_CONTENT = 136;
 
-    public const PAGE_UID_CONTAINING_EXT_PLUGIN = 134;
-
     public const PAGE_UID_CONTAINING_MENU = 133;
 
     public const PAGE_UID_NORMAL = 129;
@@ -152,20 +150,5 @@ class CacheOptimizerDataHandlerTest extends CacheOptimizerTestAbstract
             ['title' => 'testrecord_modified_content'],
         );
         $this->assertPageCacheIsEmpty(self::PAGE_UID_CONTAINING_EXT_CONTENT);
-    }
-
-    /**
-     * When a record is changed the cache should be cleared for all pages where
-     * a related plugin is present in the content elements.
-     */
-    public function testRecordChangeClearsCacheForPagesContainingRelatedPlugins(): void
-    {
-        $this->fillPageCache(self::PAGE_UID_CONTAINING_EXT_PLUGIN);
-        $this->getActionService()->modifyRecord(
-            'tx_cacheopttest_domain_model_record',
-            self::CACHEOPT_RECORD_UID,
-            ['title' => 'testrecord_modified_plugin'],
-        );
-        $this->assertPageCacheIsEmpty(self::PAGE_UID_CONTAINING_EXT_PLUGIN);
     }
 }

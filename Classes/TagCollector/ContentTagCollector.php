@@ -33,6 +33,8 @@ class ContentTagCollector extends AbstractTagCollector
         $parentObject = $event->getContentObjectRenderer();
 
         $cacheTags = [];
+
+        /** @extensionScannerIgnoreLine - False positive */
         $contentData = $parentObject->data;
 
         $table = $parentObject->getCurrentTable();
@@ -47,6 +49,7 @@ class ContentTagCollector extends AbstractTagCollector
             $cacheTags[] = new CacheTag($table . '_' . $contentData['_LOCALIZED_UID']);
         }
 
+        // @extensionScannerIgnoreLine - False positive
         $frontendCacheCollector->addCacheTags(...$cacheTags);
     }
 }

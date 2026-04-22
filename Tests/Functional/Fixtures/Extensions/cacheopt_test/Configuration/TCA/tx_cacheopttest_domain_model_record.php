@@ -9,7 +9,6 @@ return [
         'crdate' => 'crdate',
         'title' => 'Cacheopt record',
         'delete' => 'deleted',
-        'searchFields' => 'title',
     ],
     'columns' => [
         'title' => [

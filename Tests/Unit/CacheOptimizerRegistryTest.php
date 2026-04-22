@@ -46,20 +46,6 @@ class CacheOptimizerRegistryTest extends TestCase
         $this->assertTrue($this->registry->pageCacheIsFlushed(123));
     }
 
-    public function testRegisterPluginForTable(): void
-    {
-        $this->registry->registerPluginForTable('tx_myext_mytable', 'myext_listtype');
-        $this->assertSame(['myext_listtype'], $this->registry->getPluginTypesForTable('tx_myext_mytable'));
-    }
-
-    public function testRegisterPluginForTables(): void
-    {
-        $this->registry->registerPluginForTables(['tx_myext_mytable', 'tx_myext_mytable1'], 'myext_listtype');
-        $this->assertSame(['myext_listtype'], $this->registry->getPluginTypesForTable('tx_myext_mytable'));
-        $this->assertSame(['myext_listtype'], $this->registry->getPluginTypesForTable('tx_myext_mytable1'));
-        $this->assertSame([], $this->registry->getPluginTypesForTable('tx_myext_mytable2'));
-    }
-
     public function testRegisterProcessedFolder(): void
     {
         $this->registry->registerProcessedFolder(123, 'myext_directoryidentifier');

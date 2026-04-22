@@ -50,6 +50,8 @@ class FileTagCollector extends AbstractTagCollector
             $cacheTags[] = new CacheTag('sys_file_metadata_' . $fileMetadata['uid']);
         }
 
+
+        // @extensionScannerIgnoreLine - False positive
         $frontendCacheCollector->addCacheTags(...$cacheTags);
     }
 }
