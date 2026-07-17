@@ -14,12 +14,17 @@ namespace Tx\Cacheopt\TagCollector;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Tx\Cacheopt\Cache\ContentLifetimeRegistry;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectPostInitHookInterface;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 class ContentTagCollector extends AbstractTagCollector implements ContentObjectPostInitHookInterface
 {
+    public function __construct(
+        private readonly ContentLifetimeRegistry $contentLifetimeRegistry,
+    ) {}
+
     /**
      * Hook for post processing the initialization of ContentObjectRenderer.
      *
@@ -49,5 +54,32 @@ class ContentTagCollector extends AbstractTagCollector implements ContentObjectP
         }
 
         $tsfe->addCacheTags($cacheTags);
+
+        // The page itself is initialized as a content object too. Its own starttime/endtime
+        // is already taken into account by TYPO3 core's CacheLifetimeCalculator, and pages
+        // rendered as part of a menu should not reduce the cache lifetime of the current page.
+        if ($table !== 'pages') {
+            $this->registerLifetimeRestriction($table, $contentData);
+        }
+    }
+
+    /**
+     * Registers the record's starttime/endtime (if any) with the ContentLifetimeRegistry,
+     * capping the page cache lifetime even if the record is rendered from a different pid
+     * than the page (e.g. via a RECORDS content element or a shortcut), which TYPO3 core's
+     * own cache lifetime calculation does not take into account in that case.
+     */
+    private function registerLifetimeRestriction(string $table, array $record): void
+    {
+        $enableColumns = $GLOBALS['TCA'][$table]['ctrl']['enablecolumns'] ?? [];
+
+        foreach (['starttime', 'endtime'] as $field) {
+            $columnName = $enableColumns[$field] ?? null;
+            if (!is_string($columnName) || $columnName === '' || !array_key_exists($columnName, $record)) {
+                continue;
+            }
+
+            $this->contentLifetimeRegistry->registerTimestamp((int)$record[$columnName]);
+        }
     }
 }

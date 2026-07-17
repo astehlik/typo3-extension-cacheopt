@@ -175,6 +175,27 @@ abstract class CacheOptimizerTestAbstract extends FunctionalTestCase
     }
 
     /**
+     * Retrieves the "expires" timestamp of the page cache entry for the given page UID.
+     */
+    protected function getPageCacheExpires(int $pageUid): int
+    {
+        $cacheTag = $this->buildPageCacheTag($pageUid);
+
+        $builder = $this->getQueryBuilderForSelect('cache_pages');
+        $builder->select('cache_pages.expires')
+            ->from('cache_pages_tags')
+            ->where(
+                $builder->expr()->eq(
+                    'cache_pages.identifier',
+                    $builder->quoteIdentifier('cache_pages_tags.identifier')
+                )
+            )
+            ->andWhere($builder->expr()->eq('tag', $builder->createNamedParameter($cacheTag)));
+
+        return (int)$builder->executeQuery()->fetchOne();
+    }
+
+    /**
      * Retrieves one page cache record that belongs to the page with the given UID.
      */
     protected function getPageCacheRecords(int $pageUid): array

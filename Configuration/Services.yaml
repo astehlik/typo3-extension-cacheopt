@@ -9,3 +9,6 @@ services:
 
   Tx\Cacheopt\CacheOptimizerFiles:
     public: true
+
+  Tx\Cacheopt\TagCollector\ContentTagCollector:
+    public: true

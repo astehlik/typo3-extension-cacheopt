@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use Tx\Cacheopt\Cache\CacheLifetimeEventListener;
 use Tx\Cacheopt\CacheOptimizerFiles;
 use Tx\Cacheopt\TagCollector\FileTagCollector;
 use TYPO3\CMS\Core\Resource\Event\AfterFileAddedEvent;
@@ -15,6 +16,7 @@ use TYPO3\CMS\Core\Resource\Event\AfterFileMovedEvent;
 use TYPO3\CMS\Core\Resource\Event\AfterFileRenamedEvent;
 use TYPO3\CMS\Core\Resource\Event\AfterFileReplacedEvent;
 use TYPO3\CMS\Core\Resource\Event\GeneratePublicUrlForResourceEvent;
+use TYPO3\CMS\Frontend\Event\ModifyCacheLifetimeForPageEvent;
 
 return static function (ContainerConfigurator $containerConfigurator, ContainerBuilder $container): void {
     $cacheOptimizerFiles = $container->registerForAutoconfiguration(CacheOptimizerFiles::class);
@@ -58,6 +60,16 @@ return static function (ContainerConfigurator $containerConfigurator, ContainerB
             /** @uses FileTagCollector::collectTagsForPreGeneratePublicUrl() */
             'method' => 'collectTagsForPreGeneratePublicUrl',
             'identifier' => 'cacheopt/file-tag-collector',
+        ]
+    );
+
+    $cacheLifetimeEventListener = $container->registerForAutoconfiguration(CacheLifetimeEventListener::class);
+    $cacheLifetimeEventListener->addTag(
+        'event.listener',
+        [
+            'event' => ModifyCacheLifetimeForPageEvent::class,
+            'method' => '__invoke',
+            'identifier' => 'cacheopt/cache-lifetime-event-listener',
         ]
     );
 };

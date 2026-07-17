@@ -30,5 +30,11 @@ It uses an enhanced tag handling to clear the cache in these use cases:
 - When a record of an Extension is changed the cache of all pages is
   cleared where a related plugin is used.
 
+- The page cache lifetime is capped according to the starttime/endtime of
+  every rendered content element, even if it is referenced from another
+  page (e.g. via a "shortcut" or "records" content element). TYPO3 core
+  only takes starttime/endtime into account for records residing directly
+  on the cached page.
+
 
 
