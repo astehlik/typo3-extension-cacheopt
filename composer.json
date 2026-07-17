@@ -43,12 +43,15 @@
 			"typo3/cms-composer-installers": true
 		},
 		"bin-dir": ".Build/bin",
-		"vendor-dir": ".Build/vendor",
 		"policy": {
 			"advisories": {
-				"ignore": ["typo3/cms-core", "typo3/cms-backend"]
+				"ignore": [
+					"typo3/cms-core",
+					"typo3/cms-backend"
+				]
 			}
-		}
+		},
+		"vendor-dir": ".Build/vendor"
 	},
 	"extra": {
 		"typo3/class-alias-loader": {
