@@ -48,7 +48,7 @@ class ContentLifetimeRegistry implements SingletonInterface
      */
     public function registerTimestamp(int $timestamp): void
     {
-        if ($timestamp <= (int)$GLOBALS['ACCESS_TIME']) {
+        if ($timestamp <= (int)$GLOBALS['EXEC_TIME']) {
             return;
         }
 

@@ -33,9 +33,11 @@ class CacheLifetimeEventListener
             return;
         }
 
-        // +1 second to make sure the cache is definitely regenerated, matching the
-        // behaviour of TYPO3 core's own CacheLifetimeCalculator::calculatePageCacheLifetime().
-        $lifetime = $minimumTimestamp - (int)$GLOBALS['ACCESS_TIME'] + 1;
+        // EXEC_TIME (not ACCESS_TIME, which is rounded down to the current minute) is used
+        // here because Typo3DatabaseBackend::set() adds the lifetime to EXEC_TIME to compute
+        // the cache entry's expiry, so this must match exactly to avoid the cache outliving
+        // the record's endtime. +1 second to make sure the cache is definitely regenerated.
+        $lifetime = $minimumTimestamp - (int)$GLOBALS['EXEC_TIME'] + 1;
 
         $event->setCacheLifetime(min($event->getCacheLifetime(), $lifetime));
     }
