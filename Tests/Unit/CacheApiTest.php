@@ -96,7 +96,7 @@ class CacheApiTest extends TestCase
         $this->addToAssertionCount(1);
     }
 
-    private function buildRequest(TypoScriptFrontendController $frontendController): ServerRequestInterface&MockObject
+    private function buildRequest(TypoScriptFrontendController $frontendController): MockObject&ServerRequestInterface
     {
         $request = $this->createMock(ServerRequestInterface::class);
         $request->method('getAttribute')->with('frontend.controller')->willReturn($frontendController);
