@@ -42,6 +42,26 @@ class ContentLifetimeRegistry implements SingletonInterface
     }
 
     /**
+     * Registers the record's starttime/endtime (if any) with the ContentLifetimeRegistry,
+     * capping the page cache lifetime even if the record is rendered from a different pid
+     * than the page (e.g. via a RECORDS content element or a shortcut), which TYPO3 core's
+     * own cache lifetime calculation does not take into account in that case.
+     */
+    public function registerLifetimeRestriction(string $table, array $record): void
+    {
+        $enableColumns = $GLOBALS['TCA'][$table]['ctrl']['enablecolumns'] ?? [];
+
+        foreach (['starttime', 'endtime'] as $field) {
+            $columnName = $enableColumns[$field] ?? null;
+            if (!is_string($columnName) || $columnName === '' || !array_key_exists($columnName, $record)) {
+                continue;
+            }
+
+            $this->registerTimestamp((int)$record[$columnName]);
+        }
+    }
+
+    /**
      * Registers a starttime/endtime timestamp that should limit the page
      * cache lifetime. Timestamps that are not in the future are ignored,
      * as they no longer restrict future cache validity.

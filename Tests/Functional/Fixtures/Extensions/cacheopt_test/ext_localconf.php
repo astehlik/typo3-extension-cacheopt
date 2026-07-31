@@ -30,3 +30,12 @@ Tx\Cacheopt\CacheOptimizerRegistry::getInstance()->registerPluginForTable(
     'tx_cacheopttest_domain_model_record',
     'cacheopttest_recordrenderplugin'
 );
+
+/** @uses \Tx\CacheoptTest\Controller\CacheApiUsageController::registerRecordAction() */
+TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
+    'CacheoptTest',
+    'CacheApiRegisterRecord',
+    [\Tx\CacheoptTest\Controller\CacheApiUsageController::class => 'registerRecord'],
+    [],
+    TYPO3\CMS\Extbase\Utility\ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT
+);

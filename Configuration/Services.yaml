@@ -7,6 +7,9 @@ services:
   Tx\Cacheopt\:
     resource: '../Classes/*'
 
+  Tx\Cacheopt\CacheApi:
+    public: true
+
   Tx\Cacheopt\CacheOptimizerFiles:
     public: true
 

@@ -217,6 +217,30 @@ abstract class CacheOptimizerTestAbstract extends FunctionalTestCase
     }
 
     /**
+     * Retrieves all cache tags registered for the page cache entry of the given page UID.
+     */
+    protected function getPageCacheTags(int $pageUid): array
+    {
+        $pageCacheTag = $this->buildPageCacheTag($pageUid);
+
+        $identifierBuilder = $this->getQueryBuilderForSelect('cache_pages_tags');
+        $identifier = $identifierBuilder->select('identifier')
+            ->where($identifierBuilder->expr()->eq('tag', $identifierBuilder->createNamedParameter($pageCacheTag)))
+            ->executeQuery()
+            ->fetchOne();
+
+        if ($identifier === false) {
+            return [];
+        }
+
+        $tagsBuilder = $this->getQueryBuilderForSelect('cache_pages_tags');
+        return $tagsBuilder->select('tag')
+            ->where($tagsBuilder->expr()->eq('identifier', $tagsBuilder->createNamedParameter($identifier)))
+            ->executeQuery()
+            ->fetchFirstColumn();
+    }
+
+    /**
      * Loads all required database fixtures from the EXT:cacheopt/Tests/Functional/Fixtures/Database directory.
      */
     protected function loadDatabaseFixtures(): void

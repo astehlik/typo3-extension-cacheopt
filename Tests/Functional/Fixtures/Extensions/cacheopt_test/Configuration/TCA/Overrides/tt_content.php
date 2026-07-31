@@ -17,3 +17,9 @@ ExtensionUtility::registerPlugin(
     'RecordRenderContent',
     'Cacheopt - Record renderer content'
 );
+
+ExtensionUtility::registerPlugin(
+    'CacheoptTest',
+    'CacheApiRegisterRecord',
+    'Cacheopt - CacheApi register record'
+);
