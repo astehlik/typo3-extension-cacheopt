@@ -59,3 +59,38 @@ plugin types:
     ),
     'my_plugin_type'
   );
+
+.. _developers-cache-api:
+
+Register cache tags and lifetime restrictions for custom records
+==================================================================
+
+TYPO3 core automatically tags the page cache and caps its lifetime according
+to the starttime/endtime of every record that is rendered through
+:php:`ContentObjectRenderer::start()` (e.g. regular content elements, also
+when referenced from another page via a "shortcut" or "records" content
+element).
+
+If your Extension renders its own records without going through the
+ContentObjectRenderer (e.g. from an Extbase plugin using its own repository,
+or a custom ContentObject), this does not happen automatically.
+:php:`\Tx\Cacheopt\CacheApi` exposes the same mechanism directly, so you can
+call it from your own rendering code:
+
+.. code-block:: php
+
+  $cacheApi = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\Tx\Cacheopt\CacheApi::class);
+  $cacheApi->registerRecord('tx_myext_mytable', $record, $request);
+
+``$record`` is expected to be a plain record array (as read from the
+database), and ``$request`` the current PSR-7 request (e.g. ``$this->request``
+in an Extbase controller, since it also implements
+:php:`Psr\Http\Message\ServerRequestInterface`). This tags the page cache
+with ``tx_myext_mytable_<uid>`` (and, if present, the localized UID) and
+caps the page cache lifetime according to the record's starttime/endtime,
+as configured in its TCA ``enablecolumns``.
+
+If you only need one of the two effects, use
+:php:`CacheApi::registerRecordCacheTags()` or
+:php:`CacheApi::registerRecordCacheLifetime()` instead; ``registerRecord()``
+is a convenience method that calls both.
