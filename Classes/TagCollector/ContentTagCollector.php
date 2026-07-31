@@ -41,6 +41,14 @@ class ContentTagCollector implements ContentObjectPostInitHookInterface
         $contentData = $parentObject->data;
         $table = $parentObject->getCurrentTable();
 
+        // The types in ContentObjectRenderer are not strict, they might contain invalid data
+        if (
+            !is_array($contentData)
+            || !is_string($table) || $table === ''
+        ) {
+            return;
+        }
+
         $this->cacheApi->registerRecordCacheTags($table, $contentData, $request);
 
         // The page itself is initialized as a content object too. Its own starttime/endtime
