@@ -15,11 +15,15 @@ namespace Tx\Cacheopt;
  *                                                                        */
 
 use InvalidArgumentException;
+use Psr\Http\Message\ServerRequestInterface;
+use TYPO3\CMS\Core\Cache\CacheDataCollector;
 use TYPO3\CMS\Core\Cache\CacheManager;
+use TYPO3\CMS\Core\Cache\CacheTag;
 use TYPO3\CMS\Core\Cache\Exception\NoSuchCacheGroupException;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Frontend\Cache\CacheLifetimeCalculator;
 
 /**
  * API methods that can be used by extensions.
@@ -27,6 +31,10 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class CacheApi implements SingletonInterface
 {
     protected ?CacheManager $cacheManager = null;
+
+    public function __construct(
+        private readonly CacheLifetimeCalculator $cacheLifetimeCalculator,
+    ) {}
 
     /**
      * Flushes the cache for the given page.
@@ -68,6 +76,65 @@ class CacheApi implements SingletonInterface
     }
 
     /**
+     * Registers the record's starttime/endtime (if any) and caps the page cache lifetime
+     * accordingly, and tags the page cache with the record so it is flushed when the
+     * record changes.
+     *
+     * Use this to make a rendered record's cache tags and cache lifetime known to the page
+     * cache when it is rendered outside of the regular ContentObjectRenderer flow (e.g. by
+     * a custom plugin or ContentObject that does not call ContentObjectRenderer::start()),
+     * which TYPO3 core cannot take into account automatically in that case.
+     */
+    public function registerRecord(string $table, array $record, ServerRequestInterface $request): void
+    {
+        $this->registerRecordCacheTags($table, $record, $request);
+        $this->registerRecordCacheLifetime($table, $record, $request);
+    }
+
+    /**
+     * Caps the page cache lifetime according to the record's starttime/endtime, using
+     * TYPO3 core's CacheLifetimeCalculator.
+     */
+    public function registerRecordCacheLifetime(string $table, array $record, ServerRequestInterface $request): void
+    {
+        $cacheCollector = $this->getFrontendCacheCollector($request);
+        if ($cacheCollector === null) {
+            return;
+        }
+
+        $cacheCollector->restrictMaximumLifetime(
+            $this->cacheLifetimeCalculator->calculateLifetimeForRow($table, $record)
+        );
+    }
+
+    /**
+     * Tags the page cache with the given record, using the cache data collector found on
+     * the given request, so that the page cache is flushed when the record changes.
+     */
+    public function registerRecordCacheTags(string $table, array $record, ServerRequestInterface $request): void
+    {
+        $cacheCollector = $this->getFrontendCacheCollector($request);
+        if ($cacheCollector === null) {
+            return;
+        }
+
+        $uid = (int)($record['uid'] ?? 0);
+        if ($table === '' || $uid === 0) {
+            return;
+        }
+
+        $cacheTags = [new CacheTag($table . '_' . $uid)];
+
+        if (array_key_exists('_LOCALIZED_UID', $record) && (int)$record['_LOCALIZED_UID'] !== 0) {
+            $cacheTags[] = new CacheTag($table . '_' . $record['_LOCALIZED_UID']);
+        }
+
+        // @extensionScannerIgnoreLine - False positive, this is CacheDataCollector::addCacheTags(),
+        // not the removed TypoScriptFrontendController one.
+        $cacheCollector->addCacheTags(...$cacheTags);
+    }
+
+    /**
      * Loads an instance of the cache manager in the cacheManager class variable.
      *
      * @throws InvalidArgumentException
@@ -77,5 +144,12 @@ class CacheApi implements SingletonInterface
         if ($this->cacheManager === null) {
             $this->cacheManager = GeneralUtility::makeInstance(CacheManager::class);
         }
+    }
+
+    private function getFrontendCacheCollector(ServerRequestInterface $request): ?CacheDataCollector
+    {
+        $cacheCollector = $request->getAttribute('frontend.cache.collector');
+
+        return $cacheCollector instanceof CacheDataCollector ? $cacheCollector : null;
     }
 }
