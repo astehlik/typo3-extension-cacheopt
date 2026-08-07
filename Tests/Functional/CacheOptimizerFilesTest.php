@@ -76,8 +76,11 @@ class CacheOptimizerFilesTest extends CacheOptimizerTestAbstract
     }
 
     /**
-     * If a sys_file record is changed the the cache of all pages is cleared
+     * If a sys_file record is changed the cache of all pages is cleared
      * where a reference to this file is used in the content elements.
+     *
+     * This works by default in TYPO3 via the sys_file_<uid> cache tag
+     * (requires the frontend.cache.autoTagging feature toggle to be enabled).
      */
     public function testFileChangeClearsCacheForPagesReferencingToTheFile(): void
     {
@@ -99,6 +102,9 @@ class CacheOptimizerFilesTest extends CacheOptimizerTestAbstract
     /**
      * If a sys_file record that is referenced by a page is overwritten by an upload
      * the cache of the page referencing the file should be cleared.
+     *
+     * This works by default in TYPO3 via the sys_file_<uid> cache tag
+     * (requires the frontend.cache.autoTagging feature toggle to be enabled).
      */
     public function testFileUploadClearsCacheOfPageWhereOverwrittenFileIsReferenced(): void
     {
