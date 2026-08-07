@@ -21,13 +21,10 @@ use TYPO3\CMS\Core\Cache\Exception\NoSuchCacheGroupException;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Resource\Event\AfterFileAddedEvent;
-use TYPO3\CMS\Core\Resource\Event\AfterFileContentsSetEvent;
 use TYPO3\CMS\Core\Resource\Event\AfterFileCopiedEvent;
 use TYPO3\CMS\Core\Resource\Event\AfterFileCreatedEvent;
 use TYPO3\CMS\Core\Resource\Event\AfterFileDeletedEvent;
 use TYPO3\CMS\Core\Resource\Event\AfterFileMovedEvent;
-use TYPO3\CMS\Core\Resource\Event\AfterFileRenamedEvent;
-use TYPO3\CMS\Core\Resource\Event\AfterFileReplacedEvent;
 use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -123,8 +120,10 @@ class CacheOptimizerFiles
 
     /**
      * Will be called after a file is moved.
-     * The cache for all pages pointing to the source directory, to the target directory
-     * or to the moved file will be flushed.
+     * The cache for all pages pointing to the source directory or the target
+     * directory will be flushed. Flushing the cache for the moved file itself
+     * is handled natively by TYPO3 core (sys_file_<uid> cache tag, requires
+     * the frontend.cache.autoTagging feature toggle to be enabled).
      *
      * @throws RuntimeException
      * @throws InvalidArgumentException
@@ -133,65 +132,8 @@ class CacheOptimizerFiles
     public function handleFileMovePost(AfterFileMovedEvent $event): void
     {
         $originalFolder = $event->getOriginalFolder();
-        $file = $event->getFile();
 
         $this->flushCacheForRelatedFolders($originalFolder->getStorage()->getUid(), $originalFolder->getIdentifier());
-        if ($file instanceof File) {
-            $this->registerFileForCacheFlush($file);
-        }
-        $this->flushCacheForAllRegisteredTags();
-    }
-
-    /**
-     * Will be called after a file was renamed.
-     * Flushes the cache for all pages pointing to the file or its parent directory.
-     *
-     * @throws NoSuchCacheGroupException
-     * @throws InvalidArgumentException
-     */
-    public function handleFileRenamePost(AfterFileRenamedEvent $event): void
-    {
-        $file = $event->getFile();
-
-        if ($file instanceof File) {
-            $this->registerFileForCacheFlush($file);
-        }
-        $this->flushCacheForAllRegisteredTags();
-    }
-
-    /**
-     * Will be called after a file was renamed.
-     * Flushes the cache for all pages pointing to the file or its parent directory.
-     *
-     * @throws NoSuchCacheGroupException
-     * @throws InvalidArgumentException
-     */
-    public function handleFileReplacePost(AfterFileReplacedEvent $event): void
-    {
-        $file = $event->getFile();
-
-        if ($file instanceof File) {
-            $this->registerFileForCacheFlush($file);
-        }
-
-        $this->flushCacheForAllRegisteredTags();
-    }
-
-    /**
-     * Will be called after the content was changed in the given file.
-     * Flushes the cache for all pages pointing to the file or its parent directory.
-     *
-     * @throws NoSuchCacheGroupException
-     * @throws InvalidArgumentException
-     */
-    public function handleFileSetContentsPost(AfterFileContentsSetEvent $event): void
-    {
-        $file = $event->getFile();
-
-        if ($file instanceof File) {
-            $this->registerFileForCacheFlush($file);
-        }
-
         $this->flushCacheForAllRegisteredTags();
     }
 

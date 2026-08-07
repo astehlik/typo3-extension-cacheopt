@@ -13,6 +13,17 @@ Import the extension in the extension manager and install it.
 This Extension works out of the box with no special configuration needed
 for default TYPO3 installations.
 
+Requires the ``frontend.cache.autoTagging`` feature toggle
+------------------------------------------------------------
+
+This Extension relies on TYPO3 core's native frontend cache tagging for files
+(``sys_file_<uid>``), which is guarded by the ``frontend.cache.autoTagging``
+feature toggle. It is enabled by default on new TYPO3 v13+ instances, but
+needs to be enabled manually on instances upgraded from earlier versions
+(:guilabel:`Admin Tools > Settings > Configure Installation-Wide Options >
+FEATURES`). Without it, cache invalidation for changed/moved/renamed/replaced
+files that are directly referenced in content elements will not work.
+
 For Extensions additional configuration is needed. Default configuration
 is included for:
 

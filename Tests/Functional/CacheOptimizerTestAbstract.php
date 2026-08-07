@@ -91,6 +91,7 @@ abstract class CacheOptimizerTestAbstract extends FunctionalTestCase
         $this->configurationToUseInTestInstance = array_merge_recursive(
             $this->configurationToUseInTestInstance,
             $this->buildDatabaseCacheConfig(),
+            ['SYS' => ['features' => ['frontend.cache.autoTagging' => true]]],
         );
 
         parent::setUp();

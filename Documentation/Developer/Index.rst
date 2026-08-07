@@ -17,8 +17,7 @@ not optimal because it clears the cache of all pages where the related plugin is
 with high performance requirements!
 
 The cacheopt Extension needs to know which tables belong to which content
-type or which plugin type. This information is stored in the
-:php:`CacheOptimizerRegistry`.
+type. This information is stored in the :php:`CacheOptimizerRegistry`.
 
 To connect a table to a content type, you can use this command in the
 ``ext_localconf.php`` file of your Extension:
@@ -32,15 +31,8 @@ After adding this configuration the cache for all pages is cleared where
 content elements with the CType ``my_content_type`` are present when a
 ``tx_myext_mytable`` record is changed.
 
-The configuration for plugin types is basically the same:
-
-.. code-block:: php
-
-  \Tx\Cacheopt\CacheOptimizerRegistry::getInstance()
-  	->registerPluginForTable('tx_myext_mytable', 'my_plugin_type');
-
-There are also methods for connecting multiple tables with content or
-plugin types:
+There is also a method for connecting multiple tables with a content type
+at once:
 
 .. code-block:: php
 
@@ -50,14 +42,6 @@ plugin types:
       'tx_myext_mytable2'
     ),
     'my_content_type'
-  );
-
-  \Tx\Cacheopt\CacheOptimizerRegistry::getInstance()->registerPluginForTables(
-    array(
-      'tx_myext_mytable1',
-      'tx_myext_mytable2'
-    ),
-    'my_plugin_type'
   );
 
 .. _developers-cache-api:
