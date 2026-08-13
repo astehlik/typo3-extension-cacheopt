@@ -1,0 +1,2 @@
+# cat=basic/enable/10; type=boolean; label=Enable discovery of records hidden by a future starttime: Caps the page cache lifetime for content referenced via a shortcut, a plain RECORDS TypoScript object, or a CONTENT cObject that is currently hidden due to a future starttime. Uses Xclass overrides of RelationHandler and ContentObjectRenderer. Disable this if you experience issues related to these overrides.
+enableStarttimeDiscovery = 1
