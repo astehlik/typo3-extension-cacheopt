@@ -14,3 +14,9 @@ tt_content.cacheopttest_relatedcontent {
         orderBy = sorting
     }
 }
+
+tt_content.cacheopttest_records = RECORDS
+tt_content.cacheopttest_records {
+    tables = tt_content
+    source.field = records
+}

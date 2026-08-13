@@ -18,3 +18,4 @@ pages,,,,,,,,,
 ,142,128,1401434680,1401434688,page_containing_hidden_future_content,1920,1,0
 ,143,128,1401434680,1401434688,page_referencing_hidden_content,1984,1,0
 ,144,128,1401434680,1401434688,page_referencing_hidden_content_via_content_cobject,2048,1,0
+,145,128,1401434680,1401434688,page_referencing_hidden_content_via_records_typoscript,2112,1,0

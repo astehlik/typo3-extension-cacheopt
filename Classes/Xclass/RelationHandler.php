@@ -29,6 +29,11 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  *
  * endtime is not handled here - visible records already render normally
  * and get tagged by ContentTagCollector.
+ *
+ * Limitation: if a custom source.postUserFunc (or similar) rewrites the
+ * source string before RelationHandler::start() parses it - e.g. applying
+ * its own visibility filtering - a hidden record removed at that stage
+ * never reaches $tableArray and cannot be discovered here.
  */
 class RelationHandler extends CoreRelationHandler
 {

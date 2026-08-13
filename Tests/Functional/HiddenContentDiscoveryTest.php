@@ -22,6 +22,8 @@ class HiddenContentDiscoveryTest extends CacheOptimizerTestAbstract
 
     public const PAGE_UID_REFERENCING_HIDDEN_CONTENT_VIA_CONTENT_COBJECT = 144;
 
+    public const PAGE_UID_REFERENCING_HIDDEN_CONTENT_VIA_RECORDS_TYPOSCRIPT = 145;
+
     public const PAGE_UID_REFERENCING_HIDDEN_CONTENT_VIA_SHORTCUT = 143;
 
     /**
@@ -46,7 +48,34 @@ class HiddenContentDiscoveryTest extends CacheOptimizerTestAbstract
     }
 
     /**
-     * A shortcut on page 143 points to hidden content on another page.
+     * A plain RECORDS TypoScript object (not the built-in CType=shortcut wrapper) on page
+     * 145 lists 4 items via its "records" field: 3 visible content elements plus
+     * CONTENT_UID_HIDDEN. This mirrors a real editor-configured "Insert Records" element,
+     * as opposed to relying on fluid_styled_content's Shortcut.typoscript FLUIDTEMPLATE
+     * wrapper.
+     */
+    public function testStarttimeOfContentReferencedViaRecordsTypoScriptCapsPageCacheLifetime(): void
+    {
+        $futureStarttime = $GLOBALS['EXEC_TIME'] + 3600;
+
+        $this->getActionService()->modifyRecord(
+            'tt_content',
+            self::CONTENT_UID_HIDDEN,
+            ['starttime' => $futureStarttime]
+        );
+
+        $this->fillPageCache(self::PAGE_UID_REFERENCING_HIDDEN_CONTENT_VIA_RECORDS_TYPOSCRIPT);
+
+        $expires = $this->getPageCacheExpires(self::PAGE_UID_REFERENCING_HIDDEN_CONTENT_VIA_RECORDS_TYPOSCRIPT);
+
+        self::assertGreaterThan($GLOBALS['EXEC_TIME'] + 1800, $expires);
+        self::assertLessThanOrEqual($futureStarttime + 300, $expires);
+    }
+
+    /**
+     * A shortcut on page 143 points to hidden content on another page. Its "records" field
+     * lists 4 items: 3 visible content elements plus CONTENT_UID_HIDDEN, matching a
+     * multi-item real-world "Insert Records" configuration.
      */
     public function testStarttimeOfContentReferencedViaShortcutCapsPageCacheLifetime(): void
     {
