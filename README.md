@@ -15,6 +15,10 @@ This Extension optimizes the cache clearing behavior of TYPO3:
   all pages is cleared where a folder collection references it.
 * When a record of an Extension is changed the cache of all pages is
   cleared where a related plugin is used.
+* The page cache lifetime is capped for content referenced via a
+  shortcut, a RECORDS TypoScript object, or a CONTENT cObject that is
+  currently hidden due to a future starttime, so the cache is
+  refreshed once that content becomes visible.
 
 ## More documentation
 

@@ -12,8 +12,10 @@ namespace Tx\Cacheopt\Xclass;
  * License, or (at your option) any later version.                        *
  */
 
-use Tx\Cacheopt\Cache\ContentLifetimeRegistry;
+use Psr\Http\Message\ServerRequestInterface;
+use Tx\Cacheopt\CacheApi;
 use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Http\ApplicationType;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer as CoreContentObjectRenderer;
 
@@ -39,6 +41,17 @@ class ContentObjectRenderer extends CoreContentObjectRenderer
 
     private function registerLifetimeForUpcomingRecords(string $table, array $conf): void
     {
+        $request = $GLOBALS['TYPO3_REQUEST'] ?? null;
+
+        // Avoid the discovery query below entirely outside a real frontend request (e.g.
+        // backend preview rendering, CLI), where the result would never be used anyway.
+        if (
+            !$request instanceof ServerRequestInterface
+            || !ApplicationType::fromRequest($request)->isFrontend()
+        ) {
+            return;
+        }
+
         if (!isset($GLOBALS['TCA'][$table])) {
             return;
         }
@@ -80,9 +93,9 @@ class ContentObjectRenderer extends CoreContentObjectRenderer
         $connection = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable($table);
         $result = $connection->executeQuery($statement);
 
-        $contentLifetimeRegistry = GeneralUtility::makeInstance(ContentLifetimeRegistry::class);
+        $cacheApi = GeneralUtility::makeInstance(CacheApi::class);
         while ($row = $result->fetchAssociative()) {
-            $contentLifetimeRegistry->registerLifetimeRestriction($table, $row);
+            $cacheApi->registerRecordCacheLifetime($table, $row);
         }
     }
 }

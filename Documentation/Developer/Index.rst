@@ -93,3 +93,36 @@ If you only need one of the two effects, use
 :php:`CacheApi::registerRecordCacheTags()` or
 :php:`CacheApi::registerRecordCacheLifetime()` instead; ``registerRecord()``
 is a convenience method that calls both.
+
+.. _developers-starttime-discovery:
+
+Discovery of records hidden by a future starttime
+====================================================
+
+The mechanism described above only caps the page cache lifetime for records
+that are actually rendered. A record that is currently hidden due to a
+future starttime is never rendered, so its starttime cannot be taken into
+account this way - the page cache would keep serving a version of the page
+missing that content long after it should have appeared.
+
+This Extension closes this gap for the two mechanisms TYPO3 core uses to load
+referenced records:
+
+- :php:`RelationHandler::getFromDB()` (used by shortcut content elements and
+  RECORDS TypoScript objects with ``source.field``)
+- :php:`ContentObjectRenderer::exec_getQuery()` (used by the CONTENT cObject
+  and the DatabaseQueryProcessor)
+
+via Xclass overrides that run an additional, unrestricted query for
+candidates with a future starttime and register the result with
+:php:`\Tx\Cacheopt\Cache\ContentLifetimeRegistry`, which caps the page cache
+lifetime through a :php:`ModifyCacheLifetimeForPageEvent` listener, without
+letting the hidden content itself reach the rendered output.
+
+**Limitation:** if a custom ``source.postUserFunc`` (or similar) rewrites the
+list of referenced records before TYPO3 core resolves it - e.g. applying its
+own visibility filtering - a record removed at that stage never reaches this
+discovery mechanism and cannot be taken into account.
+
+This can be disabled via the extension configuration if it causes issues,
+see :ref:`installation-extension-configuration`.

@@ -36,5 +36,12 @@ It uses an enhanced tag handling to clear the cache in these use cases:
   only takes starttime/endtime into account for records residing directly
   on the cached page.
 
+- The page cache lifetime is also capped for content referenced via a
+  shortcut, a RECORDS TypoScript object, or a CONTENT cObject that is
+  currently hidden due to a future starttime, so the cache is refreshed
+  once that content becomes visible. This is not covered by the previous
+  point, since a hidden record is never rendered in the first place. This
+  can be disabled via the extension configuration, see :ref:`installation`.
+
 
 

@@ -14,10 +14,12 @@ namespace Tx\Cacheopt\Xclass;
  * The TYPO3 project - inspiring people to share!                         *
  */
 
-use Tx\Cacheopt\Cache\ContentLifetimeRegistry;
+use Psr\Http\Message\ServerRequestInterface;
+use Tx\Cacheopt\CacheApi;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\Platform\PlatformInformation;
 use TYPO3\CMS\Core\Database\RelationHandler as CoreRelationHandler;
+use TYPO3\CMS\Core\Http\ApplicationType;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -46,7 +48,18 @@ class RelationHandler extends CoreRelationHandler
 
     private function registerLifetimeForReferencedRecords(array $tableArray): void
     {
-        $contentLifetimeRegistry = GeneralUtility::makeInstance(ContentLifetimeRegistry::class);
+        $request = $GLOBALS['TYPO3_REQUEST'] ?? null;
+
+        // Avoid the discovery queries below entirely outside a real frontend request (e.g.
+        // backend preview rendering, CLI), where the result would never be used anyway.
+        if (
+            !$request instanceof ServerRequestInterface
+            || !ApplicationType::fromRequest($request)->isFrontend()
+        ) {
+            return;
+        }
+
+        $cacheApi = GeneralUtility::makeInstance(CacheApi::class);
 
         foreach ($tableArray as $table => $ids) {
             if (!is_array($ids) || $ids === [] || !isset($GLOBALS['TCA'][$table])) {
@@ -82,7 +95,7 @@ class RelationHandler extends CoreRelationHandler
                     ->executeQuery();
 
                 while ($row = $statement->fetchAssociative()) {
-                    $contentLifetimeRegistry->registerLifetimeRestriction($table, $row);
+                    $cacheApi->registerRecordCacheLifetime($table, $row);
                 }
             }
         }
