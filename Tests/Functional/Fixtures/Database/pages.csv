@@ -15,3 +15,6 @@ pages,,,,,,,,,
 ,139,138,1401434680,1401434688,page_referenced_in_menu_in_sublevel,384,1,0
 ,140,128,1401434680,1401434688,page_referencing_nested_content,448,1,0
 ,141,128,1401434680,1401434688,page_containing_cacheapi_register_record,1856,1,0
+,142,128,1401434680,1401434688,page_containing_hidden_future_content,1920,1,0
+,143,128,1401434680,1401434688,page_referencing_hidden_content,1984,1,0
+,144,128,1401434680,1401434688,page_referencing_hidden_content_via_content_cobject,2048,1,0

@@ -11,6 +11,11 @@
 		<exclude-pattern>ext_emconf.php</exclude-pattern>
 	</rule>
 
+	<!-- exec_getQuery() overrides a TYPO3 core method whose legacy snake_case name cannot be changed. -->
+	<rule ref="PSR1.Methods.CamelCapsMethodName.NotCamelCaps">
+		<exclude-pattern>Classes/Xclass/ContentObjectRenderer.php</exclude-pattern>
+	</rule>
+
 	<rule ref="Squiz.WhiteSpace.ScopeClosingBrace.ContentBefore">
 		<exclude-pattern>Classes/Cache/CacheLifetimeEventListener.php</exclude-pattern>
 		<exclude-pattern>Classes/CacheApi.php</exclude-pattern>
