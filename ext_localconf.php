@@ -25,6 +25,14 @@ if (
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tslib/class.tslib_content.php']['postInit']['tx_cacheopt']
     = Tx\Cacheopt\TagCollector\ContentTagCollector::class;
 
+// Discover records hidden by a future starttime, referenced via shortcut or CONTENT cObject.
+$GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects'][TYPO3\CMS\Core\Database\RelationHandler::class] = [
+    'className' => Tx\Cacheopt\Xclass\RelationHandler::class,
+];
+$GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects'][TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer::class] = [
+    'className' => Tx\Cacheopt\Xclass\ContentObjectRenderer::class,
+];
+
 $cacheOptimizerRegistry = Tx\Cacheopt\CacheOptimizerRegistry::getInstance();
 
 // Default configuration for the cz_simple_cal Extension.
