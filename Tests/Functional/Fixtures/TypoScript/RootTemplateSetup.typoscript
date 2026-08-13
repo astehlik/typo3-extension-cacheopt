@@ -5,3 +5,18 @@ page.10.field = title
 page.10.wrap = <h1> | </h1>
 
 page.20 < styles.content.get
+
+tt_content.cacheopttest_relatedcontent = CONTENT
+tt_content.cacheopttest_relatedcontent {
+    table = tt_content
+    select {
+        pidInList.field = pages
+        orderBy = sorting
+    }
+}
+
+tt_content.cacheopttest_records = RECORDS
+tt_content.cacheopttest_records {
+    tables = tt_content
+    source.field = records
+}
