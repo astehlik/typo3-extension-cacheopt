@@ -20,3 +20,6 @@ tt_content.cacheopttest_records {
     tables = tt_content
     source.field = records
 }
+
+tt_content.cacheopttest_filteredpagecontent = TEXT
+tt_content.cacheopttest_filteredpagecontent.value = filtered page content

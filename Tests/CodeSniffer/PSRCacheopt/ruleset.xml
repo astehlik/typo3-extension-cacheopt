@@ -20,6 +20,7 @@
 		<exclude-pattern>Classes/Cache/CacheLifetimeEventListener.php</exclude-pattern>
 		<exclude-pattern>Classes/CacheApi.php</exclude-pattern>
 		<exclude-pattern>Classes/TagCollector/ContentTagCollector.php</exclude-pattern>
+		<exclude-pattern>Classes/TypeRegistration.php</exclude-pattern>
 		<exclude-pattern>Tests/Functional/Fixtures/Extensions/cacheopt_test/Classes/Controller/CacheApiUsageController.php</exclude-pattern>
 	</rule>
 	<rule ref="SWebhosting.WhiteSpace.FunctionClosingBraceSpace">
@@ -27,5 +28,6 @@
 		<exclude-pattern>Classes/CacheApi.php</exclude-pattern>
 		<exclude-pattern>Classes/TagCollector/ContentTagCollector.php</exclude-pattern>
 		<exclude-pattern>Tests/Functional/Fixtures/Extensions/cacheopt_test/Classes/Controller/CacheApiUsageController.php</exclude-pattern>
+		<exclude-pattern>Classes/TypeRegistration.php</exclude-pattern>
 	</rule>
 </ruleset>
