@@ -15,6 +15,7 @@ namespace Tx\Cacheopt;
  *                                                                        */
 
 use Doctrine\DBAL\ArrayParameterType;
+use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
@@ -70,7 +71,7 @@ class CacheOptimizerDataHandler
         $this->cacheOptimizerRegistry->registerProcessedRecord($table, $uid);
 
         $this->currentPageIdArray = &$parameters['pageIdArray'];
-        $this->registerRelatedPluginPagesForCacheFlush($table);
+        $this->registerRelatedPluginPagesForCacheFlush($table, $uid);
     }
 
     /**
@@ -103,34 +104,33 @@ class CacheOptimizerDataHandler
 
     /**
      * Builds a where statement that selects all tt_content elements that
-     * have a content type or a plugin type that is related to the given table.
+     * have one of the given content types or plugin types.
+     *
+     * @param string[] $contentTypes
+     * @param string[] $pluginTypes
      */
-    protected function getTtContentWhereStatementForTable(string $table, QueryBuilder $queryBuilder): void
-    {
-        $this->initialize();
+    protected function getTtContentWhereStatementForTypes(
+        array $contentTypes,
+        array $pluginTypes,
+        QueryBuilder $queryBuilder
+    ): void {
         $orStatements = [];
 
-        $contentTypesForTable = $this->cacheOptimizerRegistry->getContentTypesForTable($table);
-        if ($contentTypesForTable !== []) {
+        if ($contentTypes !== []) {
             $orStatements[] = $queryBuilder->expr()->in(
                 'tt_content.CType',
-                $queryBuilder->createNamedParameter($contentTypesForTable, ArrayParameterType::STRING)
+                $queryBuilder->createNamedParameter($contentTypes, ArrayParameterType::STRING)
             );
         }
 
-        $pluginTypesForTable = $this->cacheOptimizerRegistry->getPluginTypesForTable($table);
-        if ($pluginTypesForTable !== []) {
+        if ($pluginTypes !== []) {
             $orStatements[] = $queryBuilder->expr()->and(
                 $queryBuilder->expr()->eq('tt_content.CType', $queryBuilder->createNamedParameter('list')),
                 $queryBuilder->expr()->in(
                     'tt_content.list_type',
-                    $queryBuilder->createNamedParameter($pluginTypesForTable, ArrayParameterType::STRING)
+                    $queryBuilder->createNamedParameter($pluginTypes, ArrayParameterType::STRING)
                 )
             );
-        }
-
-        if (count($orStatements) === 0) {
-            return;
         }
 
         if (count($orStatements) === 1) {
@@ -141,11 +141,6 @@ class CacheOptimizerDataHandler
         $queryBuilder->andWhere($queryBuilder->expr()->or(...$orStatements));
     }
 
-    /**
-     * Initializes required objects.
-     *
-     * @throws \InvalidArgumentException
-     */
     protected function initialize(): void
     {
         $this->cacheOptimizerRegistry = CacheOptimizerRegistry::getInstance();
@@ -171,9 +166,21 @@ class CacheOptimizerDataHandler
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
      */
-    protected function registerRelatedPluginPagesForCacheFlush(string $table): void
+    protected function registerRelatedPluginPagesForCacheFlush(string $table, int $uid): void
     {
         if (!$this->cacheOptimizerRegistry->isRegisteredPluginTable($table)) {
+            return;
+        }
+
+        $record = null;
+        if ($this->cacheOptimizerRegistry->hasRecordFilterForTable($table)) {
+            // The cache is also flushed for deleted records, so the delete clause must not apply.
+            $record = BackendUtility::getRecord($table, $uid, '*', '', false);
+        }
+
+        $contentTypes = $this->cacheOptimizerRegistry->getContentTypesForRecord($table, $record);
+        $pluginTypes = $this->cacheOptimizerRegistry->getPluginTypesForRecord($table, $record);
+        if ($contentTypes === [] && $pluginTypes === []) {
             return;
         }
 
@@ -183,7 +190,7 @@ class CacheOptimizerDataHandler
             ->groupBy('pid');
 
         $this->getPidExcludeStatement(false, $queryBuilder);
-        $this->getTtContentWhereStatementForTable($table, $queryBuilder);
+        $this->getTtContentWhereStatementForTypes($contentTypes, $pluginTypes, $queryBuilder);
 
         $pageUidResult = $queryBuilder->executeQuery();
 

@@ -27,10 +27,9 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class CacheOptimizerRegistry implements SingletonInterface
 {
     /**
-     * Array containing information which table is related to which content type:
-     * array(
-     *   'ty_myext_mytable' => 'myext_contenttype'
-     * ).
+     * The content types registered for each table.
+     *
+     * @var array<string, list<TypeRegistration>>
      */
     protected array $contentTypesByTable = [];
 
@@ -40,10 +39,9 @@ class CacheOptimizerRegistry implements SingletonInterface
     protected array $flushedPageUids = [];
 
     /**
-     * Array containing information which table is related to which plugin type:
-     * array(
-     *   'ty_myext_mytable' => 'myext_plugintype'
-     * ).
+     * The plugin types registered for each table.
+     *
+     * @var array<string, list<TypeRegistration>>
      */
     protected array $pluginTypesByTable = [];
 
@@ -74,16 +72,27 @@ class CacheOptimizerRegistry implements SingletonInterface
     }
 
     /**
+     * Returns an array containing the content types that belong to the given
+     * record: all types registered without a filter and those whose filter
+     * accepts the record. A NULL record (e.g. one that could not be loaded)
+     * only matches types registered without a filter.
+     *
+     * @return string[]
+     */
+    public function getContentTypesForRecord(string $table, ?array $record): array
+    {
+        return $this->getTypesForRecord($this->contentTypesByTable[$table] ?? [], $record);
+    }
+
+    /**
      * Returns an array containing all content types that belong to the given
-     * table or NULL if no content types are registered.
+     * table, regardless of any registered record filters.
+     *
+     * @return string[]
      */
     public function getContentTypesForTable(string $table): array
     {
-        if (!array_key_exists($table, $this->contentTypesByTable)) {
-            return [];
-        }
-
-        return $this->contentTypesByTable[$table];
+        return array_column($this->contentTypesByTable[$table] ?? [], 'type');
     }
 
     /**
@@ -95,16 +104,45 @@ class CacheOptimizerRegistry implements SingletonInterface
     }
 
     /**
+     * Returns an array containing the plugin types that belong to the given
+     * record, see getContentTypesForRecord().
+     *
+     * @return string[]
+     */
+    public function getPluginTypesForRecord(string $table, ?array $record): array
+    {
+        return $this->getTypesForRecord($this->pluginTypesByTable[$table] ?? [], $record);
+    }
+
+    /**
      * Returns an array containing all plugin types that belong to the given
-     * table or NULL if no plugin types are registered.
+     * table, regardless of any registered record filters.
+     *
+     * @return string[]
      */
     public function getPluginTypesForTable(string $table): array
     {
-        if (!array_key_exists($table, $this->pluginTypesByTable)) {
-            return [];
+        return array_column($this->pluginTypesByTable[$table] ?? [], 'type');
+    }
+
+    /**
+     * Returns TRUE if at least one content or plugin type of the given table
+     * was registered with a record filter.
+     */
+    public function hasRecordFilterForTable(string $table): bool
+    {
+        $registrations = array_merge(
+            $this->contentTypesByTable[$table] ?? [],
+            $this->pluginTypesByTable[$table] ?? []
+        );
+
+        foreach ($registrations as $registration) {
+            if ($registration->hasRecordFilter()) {
+                return true;
+            }
         }
 
-        return $this->pluginTypesByTable[$table];
+        return false;
     }
 
     /**
@@ -149,22 +187,25 @@ class CacheOptimizerRegistry implements SingletonInterface
      *
      * @param string $table the name of the table
      * @param string $contentType the value in the CType column
+     * @param ?\Closure(array $record): bool $recordFilter only flush when the changed record is accepted by this filter
      *
      * @api
      */
-    public function registerContentForTable(string $table, string $contentType): void
+    public function registerContentForTable(string $table, string $contentType, ?\Closure $recordFilter = null): void
     {
-        $this->contentTypesByTable[$table][] = $contentType;
+        $this->contentTypesByTable[$table][] = new TypeRegistration($contentType, $recordFilter);
     }
 
     /**
      * Let the registry know that the given tables are related to the given content type.
      * All tables are automatically excluded from refindex traversal.
+     *
+     * @param ?\Closure(array $record): bool $recordFilter
      */
-    public function registerContentForTables(array $tables, string $contentType): void
+    public function registerContentForTables(array $tables, string $contentType, ?\Closure $recordFilter = null): void
     {
         foreach ($tables as $table) {
-            $this->registerContentForTable($table, $contentType);
+            $this->registerContentForTable($table, $contentType, $recordFilter);
         }
     }
 
@@ -190,26 +231,28 @@ class CacheOptimizerRegistry implements SingletonInterface
      * Let the registry know that the given table is related to the given plugin type.
      *
      * @param string $table the name of the table
-     * @param string $listType The value in the list_type column.
-     *                         Since this makes sense in most cases TRUE is the default value.
+     * @param string $listType the value in the list_type column
+     * @param ?\Closure(array $record): bool $recordFilter only flush when the changed record is accepted by this filter
      *
      * @api
      */
-    public function registerPluginForTable(string $table, string $listType): void
+    public function registerPluginForTable(string $table, string $listType, ?\Closure $recordFilter = null): void
     {
-        $this->pluginTypesByTable[$table][] = $listType;
+        $this->pluginTypesByTable[$table][] = new TypeRegistration($listType, $recordFilter);
     }
 
     /**
      * Let the registry know that the given tables are related to the given plugin type.
      * All tables are automatically excluded from refindex traversal.
      *
+     * @param ?\Closure(array $record): bool $recordFilter
+     *
      * @api
      */
-    public function registerPluginForTables(array $tables, string $listType): void
+    public function registerPluginForTables(array $tables, string $listType, ?\Closure $recordFilter = null): void
     {
         foreach ($tables as $table) {
-            $this->registerPluginForTable($table, $listType);
+            $this->registerPluginForTable($table, $listType, $recordFilter);
         }
     }
 
@@ -227,5 +270,23 @@ class CacheOptimizerRegistry implements SingletonInterface
     public function registerProcessedRecord(string $table, int $uid): void
     {
         $this->processedRecords[$table][$uid] = true;
+    }
+
+    /**
+     * @param list<TypeRegistration> $registrations
+     *
+     * @return string[]
+     */
+    private function getTypesForRecord(array $registrations, ?array $record): array
+    {
+        $types = [];
+
+        foreach ($registrations as $registration) {
+            if ($registration->matchesRecord($record)) {
+                $types[] = $registration->type;
+            }
+        }
+
+        return array_values(array_unique($types));
     }
 }

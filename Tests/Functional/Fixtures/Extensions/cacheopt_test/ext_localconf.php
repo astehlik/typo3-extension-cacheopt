@@ -30,6 +30,11 @@ Tx\Cacheopt\CacheOptimizerRegistry::getInstance()->registerPluginForTable(
     'tx_cacheopttest_domain_model_record',
     'cacheopttest_recordrenderplugin'
 );
+Tx\Cacheopt\CacheOptimizerRegistry::getInstance()->registerContentForTable(
+    'pages',
+    'cacheopttest_filteredpagecontent',
+    static fn(array $record): bool => (int)$record['doktype'] === 199
+);
 
 /** @uses \Tx\CacheoptTest\Controller\CacheApiUsageController::registerRecordAction() */
 TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(

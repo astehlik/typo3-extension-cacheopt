@@ -39,6 +39,20 @@ The configuration for plugin types is basically the same:
   \Tx\Cacheopt\CacheOptimizerRegistry::getInstance()
   	->registerPluginForTable('tx_myext_mytable', 'my_plugin_type');
 
+If only some records of a table are relevant, pass a filter as third
+argument. It receives the changed record as an array (deleted records
+included) and the cache is only cleared when it returns ``true``. This
+makes it possible to register core tables like ``pages`` without clearing
+the cache on every change:
+
+.. code-block:: php
+
+  \Tx\Cacheopt\CacheOptimizerRegistry::getInstance()->registerPluginForTable(
+    'pages',
+    'my_plugin_type',
+    static fn(array $record): bool => (int)$record['doktype'] === 7000
+  );
+
 There are also methods for connecting multiple tables with content or
 plugin types:
 

@@ -33,9 +33,15 @@ class CacheOptimizerDataHandlerTest extends CacheOptimizerTestAbstract
 
     public const PAGE_UID_CONTAINING_EXT_PLUGIN = 134;
 
+    public const PAGE_UID_CONTAINING_FILTERED_PAGE_CONTENT = 146;
+
     public const PAGE_UID_CONTAINING_MENU = 133;
 
+    public const PAGE_UID_MATCHING_FILTER = 148;
+
     public const PAGE_UID_NORMAL = 129;
+
+    public const PAGE_UID_NOT_MATCHING_FILTER = 149;
 
     public const PAGE_UID_REFERENCED_IN_MENU = 132;
 
@@ -167,5 +173,41 @@ class CacheOptimizerDataHandlerTest extends CacheOptimizerTestAbstract
             ['title' => 'testrecord_modified_plugin']
         );
         $this->assertPageCacheIsEmpty(self::PAGE_UID_CONTAINING_EXT_PLUGIN);
+    }
+
+    /**
+     * When a table is registered with a record filter, only changes of records
+     * accepted by the filter clear the cache of the related pages.
+     */
+    public function testRecordChangeClearsCacheForRelatedContentsWhenRecordMatchesFilter(): void
+    {
+        $this->fillPageCache(self::PAGE_UID_CONTAINING_FILTERED_PAGE_CONTENT);
+        $this->getActionService()->modifyRecord(
+            'pages',
+            self::PAGE_UID_MATCHING_FILTER,
+            ['title' => 'page_matching_filter_modified']
+        );
+        $this->assertPageCacheIsEmpty(self::PAGE_UID_CONTAINING_FILTERED_PAGE_CONTENT);
+    }
+
+    public function testRecordChangeKeepsCacheForRelatedContentsWhenRecordDoesNotMatchFilter(): void
+    {
+        $this->fillPageCache(self::PAGE_UID_CONTAINING_FILTERED_PAGE_CONTENT);
+        $this->getActionService()->modifyRecord(
+            'pages',
+            self::PAGE_UID_NOT_MATCHING_FILTER,
+            ['title' => 'page_not_matching_filter_modified']
+        );
+        $this->assertPageCacheIsFilled(self::PAGE_UID_CONTAINING_FILTERED_PAGE_CONTENT);
+    }
+
+    /**
+     * The filter also sees deleted records, so deleting a matching record clears the cache.
+     */
+    public function testRecordDeletionClearsCacheForRelatedContentsWhenRecordMatchesFilter(): void
+    {
+        $this->fillPageCache(self::PAGE_UID_CONTAINING_FILTERED_PAGE_CONTENT);
+        $this->getActionService()->deleteRecord('pages', self::PAGE_UID_MATCHING_FILTER);
+        $this->assertPageCacheIsEmpty(self::PAGE_UID_CONTAINING_FILTERED_PAGE_CONTENT);
     }
 }
