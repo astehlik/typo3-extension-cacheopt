@@ -26,6 +26,8 @@ jobs:
         with:
           php_version: "${{ env.MAIN_PHP_VERSION }}"
       - run: |
+          # The older Composer in the testing image hashes the lock without config.policy and reports it as stale.
+          rm -f composer.lock
           bash .Build/bin/t3_run_tests.sh -s composerValidate -p ${{ env.MAIN_PHP_VERSION }}
 
   "composer-normalize":
@@ -37,6 +39,7 @@ jobs:
         with:
           php_version: "${{ env.MAIN_PHP_VERSION }}"
       - run: |
+          rm -f composer.lock
           bash .Build/bin/t3_run_tests.sh -s composerNormalize -n -p ${{ env.MAIN_PHP_VERSION }}
 
   "check-codestyle-codesniffer":
