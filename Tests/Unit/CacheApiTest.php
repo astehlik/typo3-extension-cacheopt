@@ -19,6 +19,9 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use Tx\Cacheopt\Cache\ContentLifetimeRegistry;
 use Tx\Cacheopt\CacheApi;
+use Tx\Cacheopt\CacheOptimizerRegistry;
+use TYPO3\CMS\Core\Cache\CacheManager;
+use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 class CacheApiTest extends TestCase
@@ -30,7 +33,12 @@ class CacheApiTest extends TestCase
     protected function setUp(): void
     {
         $this->contentLifetimeRegistry = $this->createMock(ContentLifetimeRegistry::class);
-        $this->cacheApi = new CacheApi($this->contentLifetimeRegistry);
+        $this->cacheApi = new CacheApi(
+            $this->createMock(CacheManager::class),
+            $this->createMock(ConnectionPool::class),
+            $this->contentLifetimeRegistry,
+            new CacheOptimizerRegistry()
+        );
     }
 
     public function testRegisterRecordCacheLifetimeDelegatesToContentLifetimeRegistry(): void
