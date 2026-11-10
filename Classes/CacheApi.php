@@ -16,8 +16,10 @@ namespace Tx\Cacheopt;
 
 use Psr\Http\Message\ServerRequestInterface;
 use Tx\Cacheopt\Cache\ContentLifetimeRegistry;
+use Tx\Cacheopt\Database\ContentTypeConstraint;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Exception\NoSuchCacheGroupException;
+use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -28,10 +30,11 @@ use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
  */
 class CacheApi implements SingletonInterface
 {
-    protected ?CacheManager $cacheManager = null;
-
     public function __construct(
+        private readonly CacheManager $cacheManager,
+        private readonly ConnectionPool $connectionPool,
         private readonly ContentLifetimeRegistry $contentLifetimeRegistry,
+        private readonly CacheOptimizerRegistry $cacheOptimizerRegistry,
     ) {}
 
     /**
@@ -51,7 +54,6 @@ class CacheApi implements SingletonInterface
             return;
         }
 
-        $this->initializeCacheManager();
         $this->cacheManager->flushCachesInGroupByTag('pages', 'pageId_' . $pageId);
     }
 
@@ -71,6 +73,38 @@ class CacheApi implements SingletonInterface
 
         $tce->registerRecordIdForPageCacheClearing($tablename, $uid);
         $tce->process_datamap();
+    }
+
+    /**
+     * Flushes the page cache of all pages containing a content type or plugin
+     * registered for the given table, e.g. after records were written without
+     * the DataHandler. Record filters are ignored, so all registered types count.
+     *
+     * @throws NoSuchCacheGroupException
+     */
+    public function flushCacheForTable(string $table): void
+    {
+        $contentTypes = $this->cacheOptimizerRegistry->getContentTypesForTable($table);
+        $pluginTypes = $this->cacheOptimizerRegistry->getPluginTypesForTable($table);
+        if ($contentTypes === [] && $pluginTypes === []) {
+            return;
+        }
+
+        $queryBuilder = $this->connectionPool->getQueryBuilderForTable('tt_content');
+        $queryBuilder->select('pid')
+            ->from('tt_content')
+            ->groupBy('pid');
+        ContentTypeConstraint::apply($contentTypes, $pluginTypes, $queryBuilder);
+
+        $cacheTags = array_map(
+            static fn (mixed $pageUid): string => 'pageId_' . (int)$pageUid,
+            $queryBuilder->executeQuery()->fetchFirstColumn()
+        );
+        if ($cacheTags === []) {
+            return;
+        }
+
+        $this->cacheManager->flushCachesInGroupByTags('pages', $cacheTags);
     }
 
     /**
@@ -120,17 +154,5 @@ class CacheApi implements SingletonInterface
         }
 
         $frontendController->addCacheTags($cacheTags);
-    }
-
-    /**
-     * Loads an instance of the cache manager in the cacheManager class variable.
-     *
-     * @throws \InvalidArgumentException
-     */
-    protected function initializeCacheManager(): void
-    {
-        if ($this->cacheManager === null) {
-            $this->cacheManager = GeneralUtility::makeInstance(CacheManager::class);
-        }
     }
 }

@@ -74,6 +74,19 @@ plugin types:
     'my_plugin_type'
   );
 
+These registrations are evaluated by a DataHandler hook. If your Extension
+writes records without the DataHandler (e.g. a bulk import with plain
+database queries), flush the related pages yourself afterwards:
+
+.. code-block:: php
+
+  \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\Tx\Cacheopt\CacheApi::class)
+    ->flushCacheForTable('tx_myext_mytable');
+
+This flushes the cache of all pages containing a content or plugin type
+registered for the table. Record filters are ignored, because there is no
+single changed record to evaluate them against.
+
 .. _developers-cache-api:
 
 Register cache tags and lifetime restrictions for custom records

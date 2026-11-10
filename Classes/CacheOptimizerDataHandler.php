@@ -15,6 +15,7 @@ namespace Tx\Cacheopt;
  *                                                                        */
 
 use Doctrine\DBAL\ArrayParameterType;
+use Tx\Cacheopt\Database\ContentTypeConstraint;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
@@ -114,31 +115,7 @@ class CacheOptimizerDataHandler
         array $pluginTypes,
         QueryBuilder $queryBuilder
     ): void {
-        $orStatements = [];
-
-        if ($contentTypes !== []) {
-            $orStatements[] = $queryBuilder->expr()->in(
-                'tt_content.CType',
-                $queryBuilder->createNamedParameter($contentTypes, ArrayParameterType::STRING)
-            );
-        }
-
-        if ($pluginTypes !== []) {
-            $orStatements[] = $queryBuilder->expr()->and(
-                $queryBuilder->expr()->eq('tt_content.CType', $queryBuilder->createNamedParameter('list')),
-                $queryBuilder->expr()->in(
-                    'tt_content.list_type',
-                    $queryBuilder->createNamedParameter($pluginTypes, ArrayParameterType::STRING)
-                )
-            );
-        }
-
-        if (count($orStatements) === 1) {
-            $queryBuilder->andWhere($orStatements[0]);
-            return;
-        }
-
-        $queryBuilder->andWhere($queryBuilder->expr()->or(...$orStatements));
+        ContentTypeConstraint::apply($contentTypes, $pluginTypes, $queryBuilder);
     }
 
     protected function initialize(): void
